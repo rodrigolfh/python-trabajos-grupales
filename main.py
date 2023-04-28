@@ -94,6 +94,49 @@ cliente1.agregar_saldo(500, "id1")
 cliente2.mostrar_saldo()
 #TODO PENDIENTE:
 
+<<<<<<< HEAD
+=======
+""" def menu_principal():
+    print("--------Bienvenido a Telovendo SPA--------")
+    print("Menú Cliente = 1")
+    print("Menú Vendedor = 2")
+    print("Menú productos = 3")
+
+    opcion = int(input("Ingrese el número de la opción deseada: \n"))
+
+    
+    switcher = {
+        1: menu_cliente,
+        2: menu_vendedor,
+        3: menu_productos,
+
+    }
+    funcion = switcher.get(opcion)
+    if funcion:
+        funcion()
+    else:
+        print("Opción no válida") """
+
+""" def menu_cliente():
+    print("")
+
+    opcion = int(input("Ingrese el número de la opción deseada: \n"))
+
+    switcher = {
+        1: ,
+        2: ,
+        3: ,
+
+    }
+    funcion = switcher.get(opcion)
+    if funcion:
+        funcion()
+    else:
+        print("Opción no válida") """
+
+def agregar_saldo():
+    pass
+>>>>>>> 96d5181b4a219058ca59f373930b7df0d106e2b1
 
 """
 Desarrollar 5 instancias de cada clase creada en los puntos anteriores.
