@@ -26,17 +26,10 @@ e. Fecha Registro
 f. __Saldo
 
 """
-clientes = []
-
-class Usuario:
-    def __init__(self, nivel, nombre, desc):
-        self.nivel = nivel
-        self.nombre = nombre
-        self.desc = desc
 
 #Se solicita que los atributos __Saldo (Cliente), __Impuesto (Producto) y __Comision (Vendedor) se
 #encuentren encapsulados. (hecho ok)
-class Cliente(Usuario):
+class Cliente():
     def __init__(self, ID_Cliente, Nombre, Apellido, Correo, Fecha_Registro, __Saldo):
         #tomo saldo como parametro porque en la tarea no le dan un valor por defecto
         self.ID_Cliente = ID_Cliente
@@ -56,11 +49,11 @@ class Cliente(Usuario):
             print("No se encuentra el cliente indicado")
     def mostrar_saldo(self):
         print(f"Saldo de cliente es {self.__Saldo}")
-#  Se debe crear métodos en la clase Cliente, lo cual puedan agregar y mostrar saldo.
+#Se debe crear métodos en la clase Cliente, lo cual puedan agregar y mostrar saldo.
 #Como se encuentra trabajando en el desarrollo del módulo de Python Básico, se solicita integrar
 #correctamente los métodos de las clases en las opciones del menú desarrollado.
 
-class Vendedor(Usuario):
+class Vendedor():
     def __init__(self, RUN, Nombre, Apellido, Seccion):
         self.RUN = RUN
         self.Nombre = Nombre
@@ -85,6 +78,7 @@ cliente2 = Cliente("id2", "Juan", "Perez", "pepo@hotmail.com", "15-enero", 0)
 cliente3 = Cliente("id3", "Pedro", "Gomez", "XXXXXXXXXXXXXXX", "20-enero", 0)
 cliente4 = Cliente("id4", "Maria", "Lopez", "XXXXXXXXXXXXXXX", "20-marzo", 0)
 cliente5 = Cliente("id5", "Luis", "Gonzalez", "XXXXXXXXXXXXXXX", "20-febrero", 0)
+
 
 #TODO PENDIENTE:
 #vendedor1-5
