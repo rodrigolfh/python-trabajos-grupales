@@ -179,34 +179,6 @@ def menu_ventas():
     else:
         print("Opción no válida")
 
-def menu_productos():
-    print("")
-    print("--------Menú Productos-------")
-    print("Agregar un Producto = 1")
-    print("Modificar un Producto = 2")
-    print("Eliminar un Producto = 3")
-    print("Consultar Stock de un Producto = 4")
-    print("Volver = 5")
-   
-    opcion = int(input("Ingrese el número de la opción deseada: \n"))
-
-    switcher = {
-        1: agregar_cliente,
-        2: modificar_cliente,
-        3: eliminar_cliente,
-        4: consultar_telopuntos,
-        5: menu_principal
-    }    
-    funcion = switcher.get(opcion)
-    if funcion:
-        funcion()
-    else:
-        print("Opción no válida")
-
-
-
-
-    pass
 def agregar_item_carrito():
     pass
 def eliminar_item_carrito():
@@ -217,6 +189,44 @@ def pago_con_telopuntos():
     pass
 def pago_normal():
     pass
+
+def menu_productos():
+    print("")
+    print("--------Menú Productos-------")
+    print("Agregar un Producto = 1")
+    print("Modificar un Producto = 2")
+    print("Eliminar un Producto = 3")
+    print("Consultar Stock = 4")
+    print("Volver = 5")
+   
+    opcion = int(input("Ingrese el número de la opción deseada: \n"))
+
+    switcher = {
+        1: agregar_producto,
+        2: modificar_producto,
+        3: eliminar_producto,
+        4: consultar_stock,
+        5: menu_principal
+    }    
+    funcion = switcher.get(opcion)
+    if funcion:
+        funcion()
+    else:
+        print("Opción no válida")
+
+def agregar_producto():
+    pass
+def modificar_producto():
+    pass
+def eliminar_producto():
+    pass
+def consultar_stock():
+    pass
+def menu_principal():
+    pass
+
+
+    
 
 
 
