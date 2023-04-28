@@ -124,7 +124,7 @@ def menu_clientes():
     print("Consultar TeloPuntos = 4")
     print("Recargar TeloPuntos = 5")
     print("Volver = 6")
-   
+    
     opcion = int(input("Ingrese el número de la opción deseada: \n"))
 
     switcher = {
@@ -158,20 +158,22 @@ def menu_ventas():
     print("Agregar al Carrito = 1")
     print("Eliminar del Carrito = 2")
     print("Ver Carrito = 3")
-    print("Pagar usando TeloPuntos= 4")
-    print("Pagar con Efectivo/Tarjeta = 5") #Pronto!
-    print("Volver = 6")
-
-    cliente = input("Ingrese número único del cliente: ")
+    print("Consultar Telopuntos = 4")
+    print("Pagar usando TeloPuntos = 5")
+    print("Pagar con Efectivo/Tarjeta = 6") #Pronto!
+    print("Volver = 7")
+    
+    cliente = input("Ingrese número único del cliente a atender : ") #para no preguntarlo a cada rato
     opcion = int(input("Ingrese el número de la opción deseada: \n"))
 
     switcher = {
         1: agregar_item_carrito,
         2: eliminar_item_carrito,
         3: ver_carrito,
-        4: pago_con_telopuntos, 
-        5: pago_normal #Pronto!
-        
+        4: consultar_telopuntos,
+        5: pago_con_telopuntos, 
+        6: pago_normal, #Pronto!
+        7: menu_principal        
     }    
     funcion = switcher.get(opcion)
     if funcion:
