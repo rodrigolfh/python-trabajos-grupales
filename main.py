@@ -26,7 +26,6 @@ e. Fecha Registro
 f. __Saldo
 
 """
-
 #Se solicita que los atributos __Saldo (Cliente), __Impuesto (Producto) y __Comision (Vendedor) se
 #encuentren encapsulados. (hecho ok)
 class Cliente():
@@ -47,8 +46,9 @@ class Cliente():
             print("El saldo nuevo es de: ", self.__Saldo)
         else:
             print("No se encuentra el cliente indicado")
+
     def mostrar_saldo(self):
-        print(f"Saldo de cliente es {self.__Saldo}")
+        print(f"Saldo de cliente {self.Nombre} {self.Apellido} es: {self.__Saldo}")
 #Se debe crear métodos en la clase Cliente, lo cual puedan agregar y mostrar saldo.
 #Como se encuentra trabajando en el desarrollo del módulo de Python Básico, se solicita integrar
 #correctamente los métodos de las clases en las opciones del menú desarrollado.
@@ -71,7 +71,6 @@ class Producto():
         self.Stock = Stock
         self.Valor_Neto = Valor_Neto
         self.__Impuesto = 1.19 
-#usuario_invitado = invitado("invitado", "invitado", "cuenta invitado")
 
 cliente1 = Cliente("id1", "Ignacio", "Fuentealba", "correo@gmail.com", "25-enero", 25000000)
 cliente2 = Cliente("id2", "Juan", "Perez", "pepo@hotmail.com", "15-enero", 0)
@@ -79,7 +78,8 @@ cliente3 = Cliente("id3", "Pedro", "Gomez", "XXXXXXXXXXXXXXX", "20-enero", 0)
 cliente4 = Cliente("id4", "Maria", "Lopez", "XXXXXXXXXXXXXXX", "20-marzo", 0)
 cliente5 = Cliente("id5", "Luis", "Gonzalez", "XXXXXXXXXXXXXXX", "20-febrero", 0)
 
-
+cliente1.agregar_saldo(500, "id1")
+cliente2.mostrar_saldo()
 #TODO PENDIENTE:
 #vendedor1-5
 #producto1-5
