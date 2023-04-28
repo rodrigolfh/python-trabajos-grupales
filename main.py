@@ -123,6 +123,7 @@ def menu_clientes():
     print("Eliminar un Cliente = 3")
     print("Consultar TeloPuntos = 4")
     print("Recargar TeloPuntos = 5")
+    print("Volver = 6")
    
     opcion = int(input("Ingrese el número de la opción deseada: \n"))
 
@@ -131,7 +132,8 @@ def menu_clientes():
         2: modificar_cliente,
         3: eliminar_cliente,
         4: consultar_telopuntos,
-        5: recargar_telopuntos
+        5: recargar_telopuntos,
+        6: menu_principal
     }    
     funcion = switcher.get(opcion)
     if funcion:
@@ -158,8 +160,9 @@ def menu_ventas():
     print("Ver Carrito = 3")
     print("Pagar usando TeloPuntos= 4")
     print("Pagar con Efectivo/Tarjeta = 5") #Pronto!
+    print("Volver = 6")
 
-   
+    cliente = input("Ingrese número único del cliente: ")
     opcion = int(input("Ingrese el número de la opción deseada: \n"))
 
     switcher = {
@@ -177,6 +180,32 @@ def menu_ventas():
         print("Opción no válida")
 
 def menu_productos():
+    print("")
+    print("--------Menú Productos-------")
+    print("Agregar un Producto = 1")
+    print("Modificar un Producto = 2")
+    print("Eliminar un Producto = 3")
+    print("Consultar Stock de un Producto = 4")
+    print("Volver = 5")
+   
+    opcion = int(input("Ingrese el número de la opción deseada: \n"))
+
+    switcher = {
+        1: agregar_cliente,
+        2: modificar_cliente,
+        3: eliminar_cliente,
+        4: consultar_telopuntos,
+        5: menu_principal
+    }    
+    funcion = switcher.get(opcion)
+    if funcion:
+        funcion()
+    else:
+        print("Opción no válida")
+
+
+
+
     pass
 def agregar_item_carrito():
     pass
