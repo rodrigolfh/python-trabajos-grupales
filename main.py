@@ -79,6 +79,17 @@ cliente3 = Cliente("id3", "Pedro", "Gomez", "XXXXXXXXXXXXXXX", "20-enero", 0)
 cliente4 = Cliente("id4", "Maria", "Lopez", "XXXXXXXXXXXXXXX", "20-marzo", 0)
 cliente5 = Cliente("id5", "Luis", "Gonzalez", "XXXXXXXXXXXXXXX", "20-febrero", 0)
 
+producto1 = Producto("001", "Producto 1", "Proveedor1, 100, 19990")
+producto2 = Producto("002", "Producto 2", "Proveedor1, 100, 9990")
+producto3 = Producto("003", "Producto 3", "Proveedor1, 100, 8990")
+producto4 = Producto("004", "Producto 4", "Proveedor2, 100, 5990")
+producto5 = Producto("005", "Producto 5", "Proveedor2, 100, 29990")
+
+vendedor1 = Vendedor("12345677-1", "Hugo", "Araya", "Zapatería")
+vendedor2 = Vendedor("12345688-2", "Paco", "Iriarte", "Deportes")
+vendedor3 = Vendedor("12345699-3", "Luis", "Gómez", "Juguetería")
+vendedor4 = Vendedor("12345655-4", "Ana", "Rodríguez", "Electro")
+vendedor5 = Vendedor("12345622-5", "María", "González", "Menaje")
 
 #TODO PENDIENTE:
 #vendedor1-5
