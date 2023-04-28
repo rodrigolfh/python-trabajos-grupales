@@ -29,10 +29,10 @@ f. __Saldo
 clientes = []
 
 class Usuario:
-    def __init__(self, nivel, nombre, desc):
+    def __init__(self, nivel, nombre):
         self.nivel = nivel
         self.nombre = nombre
-        self.desc = desc
+        
 
 #Se solicita que los atributos __Saldo (Cliente), __Impuesto (Producto) y __Comision (Vendedor) se
 #encuentren encapsulados. (hecho ok)
@@ -85,6 +85,7 @@ cliente2 = Cliente("id2", "Juan", "Perez", "pepo@hotmail.com", "15-enero", 0)
 cliente3 = Cliente("id3", "Pedro", "Gomez", "XXXXXXXXXXXXXXX", "20-enero", 0)
 cliente4 = Cliente("id4", "Maria", "Lopez", "XXXXXXXXXXXXXXX", "20-marzo", 0)
 cliente5 = Cliente("id5", "Luis", "Gonzalez", "XXXXXXXXXXXXXXX", "20-febrero", 0)
+
 
 #TODO PENDIENTE:
 #vendedor1-5
