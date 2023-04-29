@@ -52,14 +52,36 @@ class Cliente():
 #Se debe crear métodos en la clase Cliente, lo cual puedan agregar y mostrar saldo.
 #Como se encuentra trabajando en el desarrollo del módulo de Python Básico, se solicita integrar
 #correctamente los métodos de las clases en las opciones del menú desarrollado.
+cliente1 = Cliente("id1", "Ignacio", "Fuentealba", "correo@gmail.com", "25-enero", 25000000)
+cliente2 = Cliente("id2", "Juan", "Perez", "pepo@hotmail.com", "15-enero", 0)
+cliente3 = Cliente("id3", "Pedro", "Gomez", "XXXXXXXXXXXXXXX", "20-enero", 0)
+cliente4 = Cliente("id4", "Maria", "Lopez", "XXXXXXXXXXXXXXX", "20-marzo", 0)
+cliente5 = Cliente("id5", "Luis", "Gonzalez", "XXXXXXXXXXXXXXX", "20-febrero", 0)
 
 class Vendedor():
-    def __init__(self, RUN, Nombre, Apellido, Seccion):
+    def __init__(self, RUN, Nombre, Apellido, Seccion, __Comision):
         self.RUN = RUN
         self.Nombre = Nombre
         self.Apellido = Apellido
         self.Seccion = Seccion
-        self.__Comision = 0
+        self.__Comision = __Comision 
+    
+    def porcentaje_comision(self, RUN, porcentaje):
+        if RUN == self.RUN:
+            self.__Comision = porcentaje
+            print(f"El vendedor RUT {RUN} tiene ahora un porcentaje de comisión del {porcentaje}%")
+        else:
+            print("Vendedor no existe, intente con otro RUT.")
+    def mostrar_comision(self, RUN):
+        print(f"El vendedor RUT {RUN} tiene un porcentaje de comisión del {__Comision}%")
+
+vendedor1 = Vendedor("12345677-1", "Hugo", "Araya", "Zapatería", 0)
+vendedor2 = Vendedor("12345688-2", "Paco", "Iriarte", "Deportes", 0)
+vendedor3 = Vendedor("12345699-3", "Luis", "Gómez", "Juguetería", 0)
+vendedor4 = Vendedor("12345655-4", "Ana", "Rodríguez", "Electro", 0)
+vendedor5 = Vendedor("12345622-5", "María", "González", "Menaje", 0)
+
+vendedor1.porcentaje_comision("12345677-1", 2) 
 
 class Producto():
     
@@ -70,13 +92,10 @@ class Producto():
         self.Proveedor = Proveedor
         self.Stock = Stock
         self.Valor_Neto = Valor_Neto
-        self.__Impuesto = 1.19 
-
-cliente1 = Cliente("id1", "Ignacio", "Fuentealba", "correo@gmail.com", "25-enero", 25000000)
-cliente2 = Cliente("id2", "Juan", "Perez", "pepo@hotmail.com", "15-enero", 0)
-cliente3 = Cliente("id3", "Pedro", "Gomez", "XXXXXXXXXXXXXXX", "20-enero", 0)
-cliente4 = Cliente("id4", "Maria", "Lopez", "XXXXXXXXXXXXXXX", "20-marzo", 0)
-cliente5 = Cliente("id5", "Luis", "Gonzalez", "XXXXXXXXXXXXXXX", "20-febrero", 0)
+        self.__Impuesto = 1.19
+    
+    def lista(self):
+        pass
 
 producto1 = Producto("001", "Producto 1", "Menaje", "Proveedor1", 100, 19990)
 producto2 = Producto("002", "Producto 2", "Menaje", "Proveedor1", 100, 9990)
@@ -84,15 +103,13 @@ producto3 = Producto("003", "Producto 3", "Zapatería", "Proveedor3", 100, 8990)
 producto4 = Producto("004", "Producto 4", "Deportes", "Proveedor2", 100, 5990)
 producto5 = Producto("005", "Producto 5", "Electro", "Proveedor2", 100, 29990)
 
-vendedor1 = Vendedor("12345677-1", "Hugo", "Araya", "Zapatería")
-vendedor2 = Vendedor("12345688-2", "Paco", "Iriarte", "Deportes")
-vendedor3 = Vendedor("12345699-3", "Luis", "Gómez", "Juguetería")
-vendedor4 = Vendedor("12345655-4", "Ana", "Rodríguez", "Electro")
-vendedor5 = Vendedor("12345622-5", "María", "González", "Menaje")
+
+
 
 cliente1.agregar_saldo(500, "id1")
 cliente2.mostrar_saldo()
-#TODO PENDIENTE:
+
+
 
 def menu_principal():
     print("--------Bienvenido a Telovendo SPA--------")
@@ -181,8 +198,9 @@ def menu_ventas():
     else:
         print("Opción no válida")
 
-def agregar_item_carrito():
-    pass
+carrito = []
+def agregar_item_carrito(item):
+    item = input("Ingrese Número de Producto (SKU): ")
 def eliminar_item_carrito():
     pass
 def ver_carrito():
