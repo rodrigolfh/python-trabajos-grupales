@@ -1,54 +1,26 @@
-"""
-SOLUCIÓN
-Dados los antecedentes anteriores, es necesario desarrollar una solución tecnológica que cubra los
-procesos de negocio descritos y que propongagit  una mejora en la gestión, el control, la seguridad, y
-disponibilidad de información para el negocio y sus clientes. El sistema debe permitir presentar
-productos, tomar pedidos y hacer seguimiento de estos y la gestión de clientes. Además, se requiere
-que el sistema genere reportes y estadísticas que ayuden a tomar de decisiones y mejorar el
-rendimiento de la empresa, considerando la cantidad de clientes, y la demanda de éstos. Es
-imprescindible mantener comunicación con los encargados de entregar los pedidos, y darles la
-posibilidad de realizar todas sus actividades teniendo conectividad a través de dispositivos móviles.
-
-DESARROLLO - Continuación del trabajo.
-Como parte de este ejercicio se necesita crear clases utilizando sintaxis de Python
-En base al sistema desarrollado anteriormente en el módulo de Python básico, se solicita
-Incorporar la creación de las siguientes clases.
-● Clase Cliente.
-● Clase Producto.
-● Clase Bodeguero.
-
-La Clase Cliente deberá contar con los siguientes atributos:
-a. ID Cliente
-b. Nombre
-c. Apellido
-d. Correo
-e. Fecha Registro
-f. __Saldo
-
-"""
 #Se solicita que los atributos __Saldo (Cliente), __Impuesto (Producto) y __Comision (Bodeguero) se
 #encuentren encapsulados. (hecho ok)
 class Cliente():
-    def __init__(self, ID_Cliente, Nombre, Apellido, Correo, Fecha_Registro, __Saldo):
+    def __init__(self, id_cliente, nombre, apellido, correo, fecha_Registro, __saldo):
         #tomo saldo como parametro porque en la tarea no le dan un valor por defecto
-        self.ID_Cliente = ID_Cliente
-        self.Nombre = Nombre
-        self.Apellido = Apellido
-        self.Correo = Correo
-        self.Fecha_Registro = Fecha_Registro
-        self.__Saldo = __Saldo #la encapsulacion la hago asi, con __ antes de la definicion del atributo de clase
+        self.id_cliente = id_cliente
+        self.nombre = nombre
+        self.apellido = apellido
+        self.correo = correo
+        self.fecha_registro = fecha_Registro
+        self.__saldo = __saldo #la encapsulacion la hago asi, con __ antes de la definicion del atributo de clase
 
-    def agregar_saldo(self, saldo, ID_Cliente):
-        if ID_Cliente == self.ID_Cliente:
-            print("El saldo inicial es de: ", self.__Saldo)
-            self.__Saldo += saldo
+    def agregar_saldo(self, saldo, id_cliente):
+        if id_cliente == self.id_cliente:
+            print("El saldo inicial es de: ", self.__saldo)
+            self.__saldo += saldo
             print("Se agrego el saldo de: ", saldo)
-            print("El saldo nuevo es de: ", self.__Saldo)
+            print("El saldo nuevo es de: ", self.__saldo)
         else:
             print("No se encuentra el cliente indicado")
 
     def mostrar_saldo(self):
-        print(f"Saldo de cliente {self.Nombre} {self.Apellido} es: {self.__Saldo}")
+        print(f"Saldo de cliente {self.nombre} {self.apellido} es: {self.__saldo}")
 #Se debe crear métodos en la clase Cliente, lo cual puedan agregar y mostrar saldo.
 #Como se encuentra trabajando en el desarrollo del módulo de Python Básico, se solicita integrar
 #correctamente los métodos de las clases en las opciones del menú desarrollado.
@@ -59,21 +31,21 @@ cliente4 = Cliente("id4", "Maria", "Lopez", "XXXXXXXXXXXXXXX", "20-marzo", 0)
 cliente5 = Cliente("id5", "Luis", "Gonzalez", "XXXXXXXXXXXXXXX", "20-febrero", 0)
 
 class Vendedor():
-    def __init__(self, RUN, Nombre, Apellido, Seccion, __Comision):
-        self.RUN = RUN
-        self.Nombre = Nombre
-        self.Apellido = Apellido
-        self.Seccion = Seccion
-        self.__Comision = __Comision 
+    def __init__(self, run, nombre, apellido, seccion, __comision):
+        self.run = run
+        self.nombre = nombre
+        self.apellido = apellido
+        self.seccion = seccion
+        self.__comision = __comision 
     
-    def porcentaje_comision(self, RUN, porcentaje):
-        if RUN == self.RUN:
-            self.__Comision = porcentaje
-            print(f"El vendedor RUT {RUN} tiene ahora un porcentaje de comisión del {porcentaje}%")
+    def porcentaje_comision(self, run, porcentaje):
+        if run == self.run:
+            self.__comision = porcentaje
+            print(f"El vendedor RUT {run} tiene ahora un porcentaje de comisión del {self.__comision}%")
         else:
             print("Vendedor no existe, intente con otro RUT.")
-    def mostrar_comision(self, RUN):
-        print(f"El vendedor RUT {RUN} tiene un porcentaje de comisión del {__Comision}%")
+    def mostrar_comision(self, run):
+       print(f"El vendedor RUT {run} tiene un porcentaje de comisión del {self.__comision}%")
 
 vendedor1 = Vendedor("12345677-1", "Hugo", "Araya", "Zapatería", 0)
 vendedor2 = Vendedor("12345688-2", "Paco", "Iriarte", "Deportes", 0)
@@ -81,21 +53,35 @@ vendedor3 = Vendedor("12345699-3", "Luis", "Gómez", "Juguetería", 0)
 vendedor4 = Vendedor("12345655-4", "Ana", "Rodríguez", "Electro", 0)
 vendedor5 = Vendedor("12345622-5", "María", "González", "Menaje", 0)
 
-vendedor1.porcentaje_comision("12345677-1", 2) 
+print('\nvendedor1.mostrar_comision("12345677-1")')
+vendedor1.mostrar_comision("12345677-1")
+
+print('\nvendedor1.porcentaje_comision("12345677-1", 2)')
+vendedor1.porcentaje_comision("12345677-1", 2)
 
 class Producto():
     
-    def __init__(self, SKU, Nombre, Categoria, Proveedor, Stock, Valor_Neto):
-        self.SKU = SKU
-        self.Nombre = Nombre
-        self.Categoria = Categoria
-        self.Proveedor = Proveedor
-        self.Stock = Stock
-        self.Valor_Neto = Valor_Neto
-        self.__Impuesto = 1.19
+    def __init__(self, sku, nombre, categoria, proveedor, stock, valor_neto):
+        self.sku = sku
+        self.nombre = nombre
+        self.categoria = categoria
+        self.proveedor = proveedor
+        self.stock = stock
+        self.valor_Neto = valor_neto
+        self.__impuesto = 19
     
+    def definir_impuesto_producto(self, sku, porcentaje_impuesto):
+        if sku == self.sku:
+            self.__impuesto = porcentaje_impuesto
+        else:
+            print("No se encuentra ese producto")
+        
+    def mostrar_impuesto(self, sku):
+        print(f"El impuesto del producto SKU {sku} es {self.__impuesto}%")
     def lista(self):
         pass
+
+
 
 producto1 = Producto("001", "Producto 1", "Menaje", "Proveedor1", 100, 19990)
 producto2 = Producto("002", "Producto 2", "Menaje", "Proveedor1", 100, 9990)
@@ -103,13 +89,20 @@ producto3 = Producto("003", "Producto 3", "Zapatería", "Proveedor3", 100, 8990)
 producto4 = Producto("004", "Producto 4", "Deportes", "Proveedor2", 100, 5990)
 producto5 = Producto("005", "Producto 5", "Electro", "Proveedor2", 100, 29990)
 
-
-
-
-cliente1.agregar_saldo(500, "id1")
+#prueba de método mostrar y modificar saldo
+print('\ncliente2.mostrar_saldo()')
 cliente2.mostrar_saldo()
+print('\ncliente1.agregar_saldo(500, "id1")')
+cliente1.agregar_saldo(500, "id1")
 
 
+#prueba de métodos de impuesto
+print('\nproducto1.mostrar_impuesto("001")')
+producto1.mostrar_impuesto("001")
+print('\nproducto1.definir_impuesto_producto("001", 18)')
+producto1.definir_impuesto_producto("001", 18)
+print('\nproducto1.mostrar_impuesto("001")')
+producto1.mostrar_impuesto("001")
 
 def menu_principal():
     print("--------Bienvenido a Telovendo SPA--------")
@@ -200,7 +193,7 @@ def menu_ventas():
 
 carrito = []
 def agregar_item_carrito(item):
-    item = input("Ingrese Número de Producto (SKU): ")
+    item = input("Ingrese Número de Producto (sku): ")
 def eliminar_item_carrito():
     pass
 def ver_carrito():
@@ -249,14 +242,3 @@ def menu_principal():
     
 
 
-
-"""
-
-def agregar_saldo():
-    pass
-
-
-Desarrollar 5 instancias de cada clase creada en los puntos anteriores.
-Piensen en una forma de graficar las relaciones entre las diferentes clases, puede ser un diagrama o
-gráfica. Desarrollen el ejercicio de forma intuitiva.
-"""
