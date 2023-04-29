@@ -53,10 +53,10 @@ vendedor3 = Vendedor("12345699-3", "Luis", "Gómez", "Juguetería", 0)
 vendedor4 = Vendedor("12345655-4", "Ana", "Rodríguez", "Electro", 0)
 vendedor5 = Vendedor("12345622-5", "María", "González", "Menaje", 0)
 
-print('\nvendedor1.mostrar_comision("12345677-1")')
+print('\n>>>vendedor1.mostrar_comision("12345677-1")')
 vendedor1.mostrar_comision("12345677-1")
 
-print('\nvendedor1.porcentaje_comision("12345677-1", 2)')
+print('\n>>>vendedor1.porcentaje_comision("12345677-1", 2)')
 vendedor1.porcentaje_comision("12345677-1", 2)
 
 class Producto():
@@ -90,18 +90,18 @@ producto4 = Producto("004", "Producto 4", "Deportes", "Proveedor2", 100, 5990)
 producto5 = Producto("005", "Producto 5", "Electro", "Proveedor2", 100, 29990)
 
 #prueba de método mostrar y modificar saldo
-print('\ncliente2.mostrar_saldo()')
+print('\n>>>cliente2.mostrar_saldo()')
 cliente2.mostrar_saldo()
-print('\ncliente1.agregar_saldo(500, "id1")')
+print('\n>>>cliente1.agregar_saldo(500, "id1")')
 cliente1.agregar_saldo(500, "id1")
 
 
 #prueba de métodos de impuesto
-print('\nproducto1.mostrar_impuesto("001")')
+print('\n>>>producto1.mostrar_impuesto("001")')
 producto1.mostrar_impuesto("001")
-print('\nproducto1.definir_impuesto_producto("001", 18)')
+print('\n>>>producto1.definir_impuesto_producto("001", 18)')
 producto1.definir_impuesto_producto("001", 18)
-print('\nproducto1.mostrar_impuesto("001")')
+print('\n>>>producto1.mostrar_impuesto("001")')
 producto1.mostrar_impuesto("001")
 
 def menu_principal():
