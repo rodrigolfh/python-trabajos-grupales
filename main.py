@@ -1,7 +1,7 @@
 #Se solicita que los atributos __Saldo (Cliente), __Impuesto (Producto) y __Comision (Bodeguero) se
 #encuentren encapsulados. (hecho ok)
-class Cliente:
-    def __init__(self, ID_Cliente, Nombre, Apellido, Correo, Fecha_Registro, __Saldo):
+class Cliente():
+    def __init__(self, id_cliente, nombre, apellido, correo, fecha_Registro, __saldo):
         #tomo saldo como parametro porque en la tarea no le dan un valor por defecto
         self.id_cliente = id_cliente
         self.nombre = nombre
