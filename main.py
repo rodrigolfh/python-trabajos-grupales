@@ -18,6 +18,11 @@ class Cliente():
             print("El saldo nuevo es de: ", self.__saldo)
         else:
             print("No se encuentra el cliente indicado")
+    def getter_temporal_saldo(self):
+        return self.__saldo
+    
+    def setter_descontar_saldo(self, cantidad_a_restar):
+        self.__saldo -= cantidad_a_restar
 
     def mostrar_saldo(self):
         print(f"Saldo de cliente {self.nombre} {self.apellido} es: {self.__saldo}")
@@ -36,7 +41,13 @@ class Vendedor():
         self.nombre = nombre
         self.apellido = apellido
         self.seccion = seccion
-        self.__comision = __comision 
+        self.__comision = __comision
+    
+    def set_comision(self, nueva_comision):
+        self.__comision = nueva_comision
+
+    def get_comision(self):
+        return self.__comision    
     
     def porcentaje_comision(self, run, porcentaje):
         if run == self.run:
@@ -47,11 +58,11 @@ class Vendedor():
     def mostrar_comision(self, run):
        print(f"El vendedor RUT {run} tiene un porcentaje de comisión del {self.__comision}%")
 
-vendedor1 = Vendedor("12345677-1", "Hugo", "Araya", "Zapatería", 0)
-vendedor2 = Vendedor("12345688-2", "Paco", "Iriarte", "Deportes", 0)
-vendedor3 = Vendedor("12345699-3", "Luis", "Gómez", "Juguetería", 0)
-vendedor4 = Vendedor("12345655-4", "Ana", "Rodríguez", "Electro", 0)
-vendedor5 = Vendedor("12345622-5", "María", "González", "Menaje", 0)
+vendedor1 = Vendedor("12345677-1", "Hugo", "Araya", "Zapatería", 0.5)
+vendedor2 = Vendedor("12345688-2", "Paco", "Iriarte", "Deportes", 0.5)
+vendedor3 = Vendedor("12345699-3", "Luis", "Gómez", "Juguetería", 0.5)
+vendedor4 = Vendedor("12345655-4", "Ana", "Rodríguez", "Electro", 0.5)
+vendedor5 = Vendedor("12345622-5", "María", "González", "Menaje", 0.5)
 
 print('\nvendedor1.mostrar_comision("12345677-1")')
 vendedor1.mostrar_comision("12345677-1")
@@ -66,9 +77,10 @@ class Producto():
         self.nombre = nombre
         self.categoria = categoria
         self.proveedor = proveedor
-        self.stock = stock
-        self.valor_Neto = valor_neto
+        self.valor_neto = valor_neto
         self.__impuesto = 19
+        self.valor_total = valor_neto + int(round(valor_neto * (self.__impuesto/100)))
+        self.__stock = stock
     
     def definir_impuesto_producto(self, sku, porcentaje_impuesto):
         if sku == self.sku:
@@ -80,7 +92,35 @@ class Producto():
         print(f"El impuesto del producto SKU {sku} es {self.__impuesto}%")
     def lista(self):
         pass
+"""
+     
+def datos_venta(producto, cliente, vendedor, cantidad):
+    while True:
+        valor_total = input("Ingrese producto: ").valor_total()
+        valor_neto = input("Ingrese producto: ").valor_neto()
+        cliente = input("Ingrese cliente: ")
+        vendedor = input("Ingrese vendedor: ")
+        cantidad = input("Ingrese cantidad: ")
 
+"""
+
+class Venta(Producto, Cliente, Vendedor):
+    def __init__(self, producto, cliente, vendedor, cantidad):
+       
+        self.producto = producto
+        self.cliente = cliente
+        self.vendedor = vendedor
+        self.cantidad = cantidad
+        self.valor_total = producto.valor_total()
+     
+        valor_a_pagar = int(round((self.valor_total +  (vendedor.get_comision()*self.valor_neto))*self.cantidad))
+        #revisa si saldo de puntos/dinero es suficiente
+        if  (valor_a_pagar <= cliente.getter_temporal_saldo()) and (self.__stock >= cantidad):
+            cliente.setter_descontar_saldo(valor_a_pagar)
+            self.__stock -= cantidad
+        else:
+            print(("No hay suficientes unidades o el cliente no tiene saldo suficiente"))
+        
 
 
 producto1 = Producto("001", "Producto 1", "Menaje", "Proveedor1", 100, 19990)
