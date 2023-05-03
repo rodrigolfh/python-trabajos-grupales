@@ -28,7 +28,7 @@ f. __Saldo
 """
 #Se solicita que los atributos __Saldo (Cliente), __Impuesto (Producto) y __Comision (Bodeguero) se
 #encuentren encapsulados. (hecho ok)
-class Cliente():
+class Cliente:
     def __init__(self, ID_Cliente, Nombre, Apellido, Correo, Fecha_Registro, __Saldo):
         #tomo saldo como parametro porque en la tarea no le dan un valor por defecto
         self.ID_Cliente = ID_Cliente
@@ -53,7 +53,7 @@ class Cliente():
 #Como se encuentra trabajando en el desarrollo del módulo de Python Básico, se solicita integrar
 #correctamente los métodos de las clases en las opciones del menú desarrollado.
 
-class Vendedor():
+class Vendedor:
     def __init__(self, RUN, Nombre, Apellido, Seccion):
         self.RUN = RUN
         self.Nombre = Nombre
@@ -61,7 +61,7 @@ class Vendedor():
         self.Seccion = Seccion
         self.__Comision = 0
 
-class Producto():
+class Producto:
     
     def __init__(self, SKU, Nombre, Categoria, Proveedor, Stock, Valor_Neto):
         self.SKU = SKU
