@@ -1,7 +1,7 @@
 #Se solicita que los atributos __Saldo (Cliente), __Impuesto (Producto) y __Comision (Bodeguero) se
 #encuentren encapsulados. (hecho ok)
-class Cliente():
-    def __init__(self, id_cliente, nombre, apellido, correo, fecha_Registro, __saldo):
+class Cliente:
+    def __init__(self, id_cliente, nombre, apellido, correo, fecha_Registro, __saldo, edad = None):
         #tomo saldo como parametro porque en la tarea no le dan un valor por defecto
         self.id_cliente = id_cliente
         self.nombre = nombre
@@ -9,6 +9,7 @@ class Cliente():
         self.correo = correo
         self.fecha_registro = fecha_Registro
         self.__saldo = __saldo #la encapsulacion la hago asi, con __ antes de la definicion del atributo de clase
+        self.edad = edad
 
     def agregar_saldo(self, saldo, id_cliente):
         if id_cliente == self.id_cliente:
@@ -35,13 +36,14 @@ cliente3 = Cliente("id3", "Pedro", "Gomez", "XXXXXXXXXXXXXXX", "20-enero", 0)
 cliente4 = Cliente("id4", "Maria", "Lopez", "XXXXXXXXXXXXXXX", "20-marzo", 0)
 cliente5 = Cliente("id5", "Luis", "Gonzalez", "XXXXXXXXXXXXXXX", "20-febrero", 0)
 
-class Vendedor():
-    def __init__(self, run, nombre, apellido, seccion, __comision):
+class Vendedor:
+    def __init__(self, run, nombre, apellido, seccion, __comision, edad = None):
         self.run = run
         self.nombre = nombre
         self.apellido = apellido
         self.seccion = seccion
         self.__comision = __comision
+        self.edad = edad
     
     def set_comision(self, nueva_comision):
         self.__comision = nueva_comision
@@ -70,9 +72,9 @@ vendedor1.mostrar_comision("12345677-1")
 print('\nvendedor1.porcentaje_comision("12345677-1", 2)')
 vendedor1.porcentaje_comision("12345677-1", 2)
 
-class Producto():
+class Producto:
     
-    def __init__(self, sku, nombre, categoria, proveedor, stock, valor_neto):
+    def __init__(self, sku, nombre, categoria, proveedor, stock, valor_neto, color = None):
         self.sku = sku
         self.nombre = nombre
         self.categoria = categoria
@@ -80,7 +82,8 @@ class Producto():
         self.valor_neto = valor_neto
         self.__impuesto = 19
         self.valor_total = valor_neto + int(round(valor_neto * (self.__impuesto/100)))
-        self.__stock = stock
+        self.stock = stock
+        self.color = color
     
     def definir_impuesto_producto(self, sku, porcentaje_impuesto):
         if sku == self.sku:
@@ -92,6 +95,7 @@ class Producto():
         print(f"El impuesto del producto SKU {sku} es {self.__impuesto}%")
     def lista(self):
         pass
+    
 """
      
 def datos_venta(producto, cliente, vendedor, cantidad):
@@ -103,6 +107,55 @@ def datos_venta(producto, cliente, vendedor, cantidad):
         cantidad = input("Ingrese cantidad: ")
 
 """
+class Proveedor:
+
+    def __init__(self, rut, nombre, razon_social, pais, tipo_persona):
+        self.rut = rut
+        self.nombre = nombre
+        self.razon_social = razon_social
+        self.pais = pais
+        self.tipo_persona = tipo_persona
+
+
+##se agrega la clase compra
+class Compra:
+    def __init__(self, cliente, producto, vendedor, cantidad):
+        self.cliente = cliente
+        self.producto = producto
+        self.vendedor = vendedor
+        self.cantidad = cantidad
+    
+    def validar_stock(self):
+        if self.cantidad > self.producto.stock:
+            print("No hay suficiente stock disponible.")
+            return False
+        return True
+    
+    def validar_saldo(self):
+        total_compra = self.cantidad * self.producto.valor_neto
+        saldo = self.cliente.getter_temporal_saldo() 
+        if total_compra > saldo:
+            print("El cliente no tiene suficiente saldo para realizar la compra.")
+            return False
+        return True
+    
+    def procesar_compra(self):
+        if ((self.validar_stock() and self.validar_saldo())==True):
+            self.producto.stock -= self.cantidad #actualiza stock
+            saldo = self.cliente.getter_temporal_saldo()
+            nuevo_saldo = saldo - (self.cantidad * self.producto.valor_neto) #guarda variable para actualizar saldo en la clase cliente
+            print("Compra realizada con éxito.")
+            return nuevo_saldo
+
+proveedor1 = Proveedor("111111111", "Proveedor1", "Falabella", "Mexico", "Persona Juridica")
+proveedor2 = Proveedor("222222222", "Proveedor2", "Ripley", "Chile", "Persona Juridica")
+proveedor3 = Proveedor("333333333", "Proveedor3", "CAT", "USA", "Persona Juridica")
+proveedor4 = Proveedor("444444444", "Proveedor4", "Doite", "USA", "Persona Juridica")
+proveedor5 = Proveedor("555555555", "Proveedor5", "Samsung", "Corea", "Persona Juridica")
+
+
+
+
 
 class Venta(Producto, Cliente, Vendedor):
     def __init__(self, producto, cliente, vendedor, cantidad):
@@ -123,11 +176,26 @@ class Venta(Producto, Cliente, Vendedor):
         
 
 
-producto1 = Producto("001", "Producto 1", "Menaje", "Proveedor1", 100, 19990)
-producto2 = Producto("002", "Producto 2", "Menaje", "Proveedor1", 100, 9990)
-producto3 = Producto("003", "Producto 3", "Zapatería", "Proveedor3", 100, 8990)
-producto4 = Producto("004", "Producto 4", "Deportes", "Proveedor2", 100, 5990)
-producto5 = Producto("005", "Producto 5", "Electro", "Proveedor2", 100, 29990)
+producto1 = Producto("001", "Producto 1", "Menaje", proveedor1, 100, 19990)
+producto2 = Producto("002", "Producto 2", "Menaje", proveedor2, 100, 9990)
+producto3 = Producto("003", "Producto 3", "Zapatería", proveedor3, 100, 8990)
+producto4 = Producto("004", "Producto 4", "Deportes", proveedor4, 100, 5990)
+producto5 = Producto("005", "Producto 5", "Electro", proveedor5, 100, 29990)
+
+#acceder a la clase proveedor a traves de la clase producto
+print(producto1.proveedor.razon_social)
+
+#probar clase compra
+compra1 = Compra(cliente1, producto1, vendedor1, 10)
+compra1.validar_stock()
+compra1.validar_saldo()
+compra1.procesar_compra()
+
+compra1 = Compra(cliente2, producto2, vendedor3, 1000)
+compra1.validar_stock()
+compra1.validar_saldo()
+compra1.procesar_compra()
+
 
 #prueba de método mostrar y modificar saldo
 print('\ncliente2.mostrar_saldo()')
