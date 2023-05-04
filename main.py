@@ -28,8 +28,8 @@ class Cliente:
     #def setter_descontar_saldo(self, cantidad_a_restar):
     #    self.__saldo -= cantidad_a_restar
 
-    def mostrar_saldo(self):
-        print(f"Saldo de cliente {self.nombre} {self.apellido} es: {self.__saldo}")
+    #def mostrar_saldo(self):
+    #    print(f"Saldo de cliente {self.nombre} {self.apellido} es: {self.__saldo}")
 
     @property
     def saldo(self):
@@ -135,6 +135,7 @@ class Producto:
         #se asume la existencia de una lista de objetos producto  
         #llamada "productos" donde uno de sus valores es "sku"
         #la agregué arriba, sobre de la definicion de clases
+
         for sku in skus:
             for producto in productos:
                 if producto.SKU == sku:
