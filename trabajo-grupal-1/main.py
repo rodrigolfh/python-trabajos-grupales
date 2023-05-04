@@ -1,6 +1,10 @@
 #Se solicita que los atributos __Saldo (Cliente), __Impuesto (Producto) y __Comision (Bodeguero) se
 #encuentren encapsulados. (hecho ok)
-class Cliente():
+
+productos = []
+clientes = []
+
+class Cliente:
     def __init__(self, id_cliente, nombre, apellido, correo, fecha_Registro, __saldo):
         #tomo saldo como parametro porque en la tarea no le dan un valor por defecto
         self.id_cliente = id_cliente
@@ -10,22 +14,47 @@ class Cliente():
         self.fecha_registro = fecha_Registro
         self.__saldo = __saldo #la encapsulacion la hago asi, con __ antes de la definicion del atributo de clase
 
-    def agregar_saldo(self, saldo, id_cliente):
-        if id_cliente == self.id_cliente:
-            print("El saldo inicial es de: ", self.__saldo)
-            self.__saldo += saldo
-            print("Se agrego el saldo de: ", saldo)
-            print("El saldo nuevo es de: ", self.__saldo)
-        else:
-            print("No se encuentra el cliente indicado")
-    def getter_temporal_saldo(self):
-        return self.__saldo
+    #def agregar_saldo(self, saldo, id_cliente):
+    #  if id_cliente == self.id_cliente:
+    #      print("El saldo inicial es de: ", self.__saldo)
+    #       self.__saldo += saldo
+    #        print("Se agrego el saldo de: ", saldo)
+    #        print("El saldo nuevo es de: ", self.__saldo)
+    #    else:
+    #        print("No se encuentra el cliente indicado")
+    #def getter_temporal_saldo(self):
+    #    return self.__saldo
     
-    def setter_descontar_saldo(self, cantidad_a_restar):
-        self.__saldo -= cantidad_a_restar
+    #def setter_descontar_saldo(self, cantidad_a_restar):
+    #    self.__saldo -= cantidad_a_restar
 
-    def mostrar_saldo(self):
-        print(f"Saldo de cliente {self.nombre} {self.apellido} es: {self.__saldo}")
+    #def mostrar_saldo(self):
+    #    print(f"Saldo de cliente {self.nombre} {self.apellido} es: {self.__saldo}")
+
+    @property
+    def saldo(self):
+        return self.__Saldo
+    
+    @saldo.setter
+    #recuerda incluir validaciones de que los saldos sean validos de actualizar
+    #igual que arriba, se asume la existencia de una lista de clientes (objetos)
+    def saldo_setter(self, cliente_consultado, cambio_saldo):
+        for cliente in clientes:
+            if cliente.ID_Cliente == cliente_consultado:
+                #si el producto existe, validar que la transaccio  no te lanza a negativos.
+                if (cliente.__Saldo + cambio_saldo)>0: #si la suma (considerando un negativo posiblemente) es mayor a 0
+                    cliente.__Saldo = cliente.saldo + cambio_saldo #entonces hace la suma (o resta) de stock.
+                    if cambio_saldo>=0: print(f"Saldo de {cliente.nombre} {cliente.apellido} actualizado, se agregó ${cambio_saldo} de saldo, nuevo saldo: {cliente.__Saldo}")
+                    if cambio_saldo<0: print(f"Saldo de {cliente.nombre} {cliente.apellido} actualizado, se descontó ${abs(cambio_saldo)} de saldo, nuevo saldo: {cliente.__Saldo}")
+                    break
+                else: 
+                    print("No hay saldo suficiente para ejecutar la transacción")
+                    break
+        #fin del loop
+        print("No se ha encontrado el cliente consultado indicado")
+
+#============================FIN CLASE CLIENTE==================================
+
 #Se debe crear métodos en la clase Cliente, lo cual puedan agregar y mostrar saldo.
 #Como se encuentra trabajando en el desarrollo del módulo de Python Básico, se solicita integrar
 #correctamente los métodos de las clases en las opciones del menú desarrollado.
@@ -35,7 +64,7 @@ cliente3 = Cliente("id3", "Pedro", "Gomez", "XXXXXXXXXXXXXXX", "20-enero", 0)
 cliente4 = Cliente("id4", "Maria", "Lopez", "XXXXXXXXXXXXXXX", "20-marzo", 0)
 cliente5 = Cliente("id5", "Luis", "Gonzalez", "XXXXXXXXXXXXXXX", "20-febrero", 0)
 
-class Vendedor():
+class Vendedor:
     def __init__(self, run, nombre, apellido, seccion, __comision):
         self.run = run
         self.nombre = nombre
@@ -57,6 +86,7 @@ class Vendedor():
             print("Vendedor no existe, intente con otro RUT.")
     def mostrar_comision(self, run):
        print(f"El vendedor RUT {run} tiene un porcentaje de comisión del {self.__comision}%")
+#============================FIN CLASE VENDEDOR==================================
 
 vendedor1 = Vendedor("12345677-1", "Hugo", "Araya", "Zapatería", 0.5)
 vendedor2 = Vendedor("12345688-2", "Paco", "Iriarte", "Deportes", 0.5)
@@ -70,7 +100,7 @@ vendedor1.mostrar_comision("12345677-1")
 print('\nvendedor1.porcentaje_comision("12345677-1", 2)')
 vendedor1.porcentaje_comision("12345677-1", 2)
 
-class Producto():
+class Producto:
     
     def __init__(self, sku, nombre, categoria, proveedor, stock, valor_neto):
         self.sku = sku
@@ -90,8 +120,37 @@ class Producto():
         
     def mostrar_impuesto(self, sku):
         print(f"El impuesto del producto SKU {sku} es {self.__impuesto}%")
+    
     def lista(self):
         pass
+
+    @property
+    def stock(self):
+        return self.stock
+    
+    @stock.setter
+    #TODO: SOBRECARGAR ESTE METODO
+    def stock_setter(self, producto_nombre, modificacion_stock, skus): 
+        #skus vendria siendo una lista de los sku a consultar.
+        #se asume la existencia de una lista de objetos producto  
+        #llamada "productos" donde uno de sus valores es "sku"
+        #la agregué arriba, sobre de la definicion de clases
+
+        for sku in skus:
+            for producto in productos:
+                if producto.SKU == sku:
+                    #si el producto existe, validar que la transaccio  no te lanza a negativos.
+                    if (producto.Stock + modificacion_stock)>0: #si la suma (considerando un negativo posiblemente) es mayor a 0
+                        producto.Stock = producto.Stock + modificacion_stock #entonces hace la suma (o resta) de stock.
+                        if modificacion_stock>=0: print(f"Stock de {producto_nombre} actualizado, se agregaron {modificacion_stock}, nuevo stock: {producto.Stock}")
+                        if modificacion_stock<0: print(f"Stock de {producto_nombre} actualizado, se descontaron {abs(modificacion_stock)}, nuevo stock: {producto.Stock}")
+                        break
+                    else: 
+                        print("No hay stock suficiente para cubrir la solicitud")
+                        break
+            #fin del loop
+            print(f"No se ha encontrado un producto con el SKU {producto.SKU}")
+#============================FIN CLASE PRODUCTO==================================
 """
      
 def datos_venta(producto, cliente, vendedor, cantidad):
@@ -103,7 +162,6 @@ def datos_venta(producto, cliente, vendedor, cantidad):
         cantidad = input("Ingrese cantidad: ")
 
 """
-
 class Venta(Producto, Cliente, Vendedor):
     def __init__(self, producto, cliente, vendedor, cantidad):
        
