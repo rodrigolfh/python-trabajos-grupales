@@ -16,3 +16,6 @@ print(f"stock de {producto1.nombre} es {producto1.stock}")
 producto1.stock -= 500
 #producto1.stock = producto1.stock - 500
 print(f"stock de {producto1.nombre} es {producto1.stock}")
+
+compra1 = Compra(cliente1, producto1, vendedor1, 5)
+compra1.procesar_compra()

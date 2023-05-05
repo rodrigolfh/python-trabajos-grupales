@@ -106,8 +106,6 @@ class Producto:
          self._name = name
     """
 
-
-
     @property
     def stock(self):
         return self._stock
@@ -153,25 +151,13 @@ class Compra:
         self.vendedor = vendedor
         self.cantidad = cantidad
     
-    def validar_stock(self):
-        if self.cantidad > self.producto.stock:
-            print("No hay suficiente stock disponible.")
-            return False
-        return True
-    
-    def validar_saldo(self):
-        total_compra = self.cantidad * self.producto.valor_neto
-        saldo = self.cliente.getter_temporal_saldo() 
-        if total_compra > saldo:
-            print("El cliente no tiene suficiente saldo para realizar la compra.")
-            return False
-        return True
-    
     def procesar_compra(self):
-        if ((self.validar_stock() and self.validar_saldo())==True):
-            self.producto.stock -= self.cantidad #actualiza stock
-            saldo = self.cliente.getter_temporal_saldo()
+        #if ((self.validar_stock() and self.validar_saldo())==True):
+        if ((self.producto._stock > #mayor a la cantidad entrante) and self.cliente.get_saldo()> mayor al gasto)==True):
+            self.producto._stock -= self.cantidad #actualiza stock
+            saldo = self.cliente.get_saldo()
             nuevo_saldo = saldo - (self.cantidad * self.producto.valor_neto) #guarda variable para actualizar saldo en la clase cliente
+            self.cliente.set_saldo(nuevo_saldo)
             print("Compra realizada con éxito.")
             return nuevo_saldo
 
@@ -186,9 +172,9 @@ class Venta(Producto, Cliente, Vendedor):
      
         valor_a_pagar = int(round((self.valor_total +  (vendedor.get_comision()*self.valor_neto))*self.cantidad))
         #revisa si saldo de puntos/dinero es suficiente
-        if  (valor_a_pagar <= cliente.getter_temporal_saldo()) and (self.stock >= cantidad):
+        if  (valor_a_pagar <= cliente.getter_temporal_saldo()) and (self._stock >= cantidad):
             cliente.setter_descontar_saldo(valor_a_pagar)
-            self.stock -= cantidad 
+            self._stock -= cantidad 
 
         else:
             print(("No hay suficientes unidades o el cliente no tiene saldo suficiente"))
