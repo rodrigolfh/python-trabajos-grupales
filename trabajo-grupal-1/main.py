@@ -26,8 +26,6 @@ class Cliente:
                     else: 
                         print("No hay saldo suficiente para ejecutar la transacción")
 
-
-
     def set_comision(self, nueva_comision):
         self.__comision = nueva_comision
 
@@ -72,7 +70,7 @@ class Producto:
         self.valor_neto = valor_neto
         self.__impuesto = 19
         self.valor_total = valor_neto + int(round(valor_neto * (self.__impuesto/100)))
-        self.stock = stock
+        self._stock = stock
         self.color = color
     
     def definir_impuesto_producto(self, sku, porcentaje_impuesto):
@@ -93,17 +91,37 @@ class Producto:
     def get_comision(self):
         return self.__comision  
 
-    def get_stock(self):
-        return self.stock
+    #def get_stock(self):
+    #    return self.stock
+
+    """
+   @property
+    def name(self):
+         return self._name
+    
+    @name.setter
+    def name(self, name):
+         if not name:
+              raise ValueError("Missing name")
+         self._name = name
+    """
+
+
+
+    @property
+    def stock(self):
+        return self._stock
 
     #TODO: pendiente sobrecargar alguno de los métodos
-    def set_stock(self, cambio):
-                if(cambio==None):
-                    return None
-                if (self.get_stock() + cambio)>0: #si la suma (considerando un negativo posiblemente) es mayor a 0
-                    self.stock = self.stock + cambio #entonces hace la suma (o resta) de stock.
-                    if cambio>=0: print(f"Saldo de {self.nombre} actualizado, se agregó ${cambio} de stock, nuevo stock: {self.stock}")
-                    if cambio<0: print(f"Saldo de {self.nombre} actualizado, se descontó ${abs(cambio)} de stock, nuevo stock: {self.stock}")
+    @stock.setter
+    def stock(self, cambio):
+                #print(cambio) <<- toma valor entero menos con lo que lo llamaste
+                if (cambio)>0: #si la suma (considerando un negativo posiblemente) es mayor a 0
+                    #suma = self._stock + cambio #entonces hace la suma (o resta) de stock. TA MALO
+                    self._stock = cambio
+                    #este flavor text no funciona asi, necesitaré saber el delta para poder anotar el cambio como parte del return.
+                    #if cambio>=0: print(f"Stock de {self.nombre} actualizado, se agregó ${cambio} de stock, nuevo stock: {self._stock}")
+                    #if cambio<0: print(f"Stock de {self.nombre} actualizado, se descontó ${abs(cambio)} de stock, nuevo stock: {self._stock}")
                 else: 
                     print("No hay stock suficiente para ejecutar la transacción")
 
