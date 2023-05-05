@@ -4,7 +4,7 @@ productos = []
 clientes = []
 
 class Cliente:
-    def __init__(self, id_cliente, nombre, apellido, correo, fecha_Registro, __saldo, edad = None):
+    def __init__(self, id_cliente, nombre, apellido, correo, fecha_Registro, saldo, edad = None):
 
         #tomo saldo como parametro porque en la tarea no le dan un valor por defecto
         self.id_cliente = id_cliente
@@ -12,19 +12,20 @@ class Cliente:
         self.apellido = apellido
         self.correo = correo
         self.fecha_registro = fecha_Registro
-        self.__saldo = __saldo #la encapsulacion la hago asi, con __ antes de la definicion del atributo de clase
+        self.__saldo = saldo #la encapsulacion la hago asi, con __ antes de la definicion del atributo de clase
         self.edad = edad
-
-    def get_saldo(self):
-        return self.__saldo
     
-    def set_saldo(self, cambio_saldo):
-                    if (self.get_saldo() + cambio_saldo)>0: #si la suma (considerando un negativo posiblemente) es mayor a 0
-                        self.__saldo = self.__saldo + cambio_saldo #entonces hace la suma (o resta) de stock.
-                        if cambio_saldo>=0: print(f"Saldo de {self.nombre} {self.apellido} actualizado, se agregó ${cambio_saldo} de saldo, nuevo saldo: {self.__saldo}")
-                        if cambio_saldo<0: print(f"Saldo de {self.nombre} {self.apellido} actualizado, se descontó ${abs(cambio_saldo)} de saldo, nuevo saldo: {self.__saldo}")
-                    else: 
-                        print("No hay saldo suficiente para ejecutar la transacción")
+    @property
+    def saldo(self):
+        return self.__saldo
+    @saldo.setter
+    def saldo(self, cambio):
+        if (cambio)>0: #si la suma (considerando un negativo posiblemente) es mayor a 0
+            self.__saldo = cambio #entonces hace la suma (o resta) de stock.
+            #if cambio_saldo>=0: print(f"Saldo de {self.nombre} {self.apellido} actualizado, se agregó ${cambio_saldo} de saldo, nuevo saldo: {self.__saldo}")
+            #if cambio_saldo<0: print(f"Saldo de {self.nombre} {self.apellido} actualizado, se descontó ${abs(cambio_saldo)} de saldo, nuevo saldo: {self.__saldo}")
+        else: 
+            print("Operación no realizada: no hay saldo suficiente para ejecutar la transacción")
 
     def set_comision(self, nueva_comision):
         self.__comision = nueva_comision
@@ -34,18 +35,18 @@ class Cliente:
     
 #============================FIN CLASE CLIENTE==================================
 
-
 class Vendedor:
-    def __init__(self, run, nombre, apellido, seccion, __comision, edad = None):
+    def __init__(self, run, nombre, apellido, seccion, porcentage_comision, edad = None, __comision = 0):
         self.run = run
         self.nombre = nombre
         self.apellido = apellido
         self.seccion = seccion
         self.__comision = __comision
         self.edad = edad
+        self.__porcentage_comision = porcentage_comision
     
     def set_comision(self, nueva_comision):
-        self.__comision = nueva_comision
+        self.__comision += nueva_comision
 
     def get_comision(self):
         return self.__comision    
@@ -53,16 +54,16 @@ class Vendedor:
     def porcentaje_comision(self, run, porcentaje):
         if run == self.run:
             self.__comision = porcentaje
-            print(f"El vendedor RUT {run} tiene ahora un porcentaje de comisión del {self.__comision}%")
+            print(f"El vendedor RUT {run} tiene ahora un porcentaje de comisión del {self.__porcentage_comision}%")
         else:
             print("Vendedor no existe, intente con otro RUT.")
-    def mostrar_comision(self, run):
-       print(f"El vendedor RUT {run} tiene un porcentaje de comisión del {self.__comision}%")
+    def porcentage_comision(self):
+       return self.__porcentage_comision
 #============================FIN CLASE VENDEDOR==================================
 
 class Producto:
     
-    def __init__(self, sku, nombre, categoria, proveedor, valor_neto, stock, color = None):
+    def __init__(self, sku, nombre, categoria, proveedor, stock, valor_neto, color = None):
         self.sku = sku
         self.nombre = nombre
         self.categoria = categoria
@@ -78,7 +79,10 @@ class Producto:
             self.__impuesto = porcentaje_impuesto
         else:
             print("No se encuentra ese producto")
-        
+    @property
+    def impuesto(self):
+        return self.__impuesto
+
     def mostrar_impuesto(self, sku):
         print(f"El impuesto del producto SKU {sku} es {self.__impuesto}%")
     
@@ -86,31 +90,15 @@ class Producto:
         pass
 
     def set_comision(self, nueva_comision):
-        self.__comision = nueva_comision
+        self.__comision += nueva_comision
 
     def get_comision(self):
         return self.__comision  
-
-    #def get_stock(self):
-    #    return self.stock
-
-    """
-   @property
-    def name(self):
-         return self._name
-    
-    @name.setter
-    def name(self, name):
-         if not name:
-              raise ValueError("Missing name")
-         self._name = name
-    """
 
     @property
     def stock(self):
         return self._stock
 
-    #TODO: pendiente sobrecargar alguno de los métodos
     @stock.setter
     def stock(self, cambio):
                 #print(cambio) <<- toma valor entero menos con lo que lo llamaste
@@ -124,24 +112,14 @@ class Producto:
                     print("No hay stock suficiente para ejecutar la transacción")
 
 #============================FIN CLASE PRODUCTO==================================
-
-"""
-def datos_venta(producto, cliente, vendedor, cantidad):
-    while True:
-        valor_total = input("Ingrese producto: ").valor_total()
-        valor_neto = input("Ingrese producto: ").valor_neto()
-        cliente = input("Ingrese cliente: ")
-        vendedor = input("Ingrese vendedor: ")
-        cantidad = input("Ingrese cantidad: ")
-"""
 class Proveedor:
-
     def __init__(self, rut, nombre, razon_social, pais, tipo_persona):
         self.rut = rut
         self.nombre = nombre
         self.razon_social = razon_social
         self.pais = pais
         self.tipo_persona = tipo_persona
+#============================FIN CLASE PROVEEDOR==================================
 
 ##se agrega la clase compra
 class Compra:
@@ -152,33 +130,38 @@ class Compra:
         self.cantidad = cantidad
     
     def procesar_compra(self):
-        #if ((self.validar_stock() and self.validar_saldo())==True):
-        if ((self.producto._stock > #mayor a la cantidad entrante) and self.cliente.get_saldo()> mayor al gasto)==True):
-            self.producto._stock -= self.cantidad #actualiza stock
-            saldo = self.cliente.get_saldo()
-            nuevo_saldo = saldo - (self.cantidad * self.producto.valor_neto) #guarda variable para actualizar saldo en la clase cliente
-            self.cliente.set_saldo(nuevo_saldo)
+        gasto = self.cantidad*self.producto.valor_total #el gasto del cliente debe incluir el impuesto
+        print("Detalle de la transacción:")
+        print(f"Valor bruto:  {self.cantidad}*${self.producto.valor_neto} = {self.cantidad*self.producto.valor_neto}")
+        print(f"Valor neto:   {self.cantidad}*${self.producto.valor_total} = ${gasto}")
+
+        if (self.producto.stock>=self.cantidad and self.cliente.saldo>=gasto)==True:
+            
+            print("N°s originales")
+            print(f"saldo de cliente es {self.cliente.saldo}")
+            print(f"stock de producto es {self.producto.stock}")
+            print(f"comision cumulativa de vendedor es {self.vendedor.get_comision()}")
+            print(f"Se realizó una compra por ${gasto}")
+            #la comision incluirá el impuesto como parte del monto gastado
+            #realizamos deducciones y adicion de comision ganada
+            self.cliente.saldo -= gasto #estas son asi porque sobrecargan
+            self.producto.stock -= self.cantidad #estas son asi porque sobrecargan
+            print(f"comision es de {self.vendedor.porcentage_comision()}%")
+            self.vendedor.set_comision(gasto * self.vendedor.porcentage_comision()/100) 
+            #porcentage comision te devuelve un numero entero representando su cut y multiplicamos por el 
+            #valor total para sacar la comision que se va al trabajador, que en los ejemplos es del 5%
+            #prints para testear cambios internos
+            print("Post transacción:")
+            print(f"saldo de cliente es {self.cliente.saldo}")
+            print(f"stock de producto es {self.producto.stock}")
+            print(f"comision de vendedor es {self.vendedor.get_comision()}")
             print("Compra realizada con éxito.")
-            return nuevo_saldo
-
-class Venta(Producto, Cliente, Vendedor):
-    def __init__(self, producto, cliente, vendedor, cantidad):
-       
-        self.producto = producto
-        self.cliente = cliente
-        self.vendedor = vendedor
-        self.cantidad = cantidad
-        self.valor_total = producto.valor_total()
-     
-        valor_a_pagar = int(round((self.valor_total +  (vendedor.get_comision()*self.valor_neto))*self.cantidad))
-        #revisa si saldo de puntos/dinero es suficiente
-        if  (valor_a_pagar <= cliente.getter_temporal_saldo()) and (self._stock >= cantidad):
-            cliente.setter_descontar_saldo(valor_a_pagar)
-            self._stock -= cantidad 
-
-        else:
-            print(("No hay suficientes unidades o el cliente no tiene saldo suficiente"))
-
+            #return nuevo_saldo
+        elif(self.producto.stock<self.cantidad):
+            print("No hay suficientes unidades para concretar la transacción")
+        elif(self.cliente.saldo<gasto):
+            print("No tiene saldo suficiente para concretar la transacción")
+#===================================FIN CLASE COMPRA=====================================
 #===================================INSTANCIACIONES DE EJEMPLO=====================================
 proveedor1 = Proveedor("111111111", "Proveedor1", "Falabella", "Mexico", "Persona Juridica")
 proveedor2 = Proveedor("222222222", "Proveedor2", "Ripley", "Chile", "Persona Juridica")
@@ -186,17 +169,17 @@ proveedor3 = Proveedor("333333333", "Proveedor3", "CAT", "USA", "Persona Juridic
 proveedor4 = Proveedor("444444444", "Proveedor4", "Doite", "USA", "Persona Juridica")
 proveedor5 = Proveedor("555555555", "Proveedor5", "Samsung", "Corea", "Persona Juridica")
 
-producto1 = Producto("001", "Producto 1", "Menaje", proveedor1, 100, 19990)
+producto1 = Producto("001", "Producto 1", "Menaje", proveedor1, 5, 19990)
 producto2 = Producto("002", "Producto 2", "Menaje", proveedor2, 100, 9990)
 producto3 = Producto("003", "Producto 3", "Zapatería", proveedor3, 100, 8990)
 producto4 = Producto("004", "Producto 4", "Deportes", proveedor4, 100, 5990)
 producto5 = Producto("005", "Producto 5", "Electro", proveedor5, 100, 29990)
 
-vendedor1 = Vendedor("12345677-1", "Hugo", "Araya", "Zapatería", 0.5)
-vendedor2 = Vendedor("12345688-2", "Paco", "Iriarte", "Deportes", 0.5)
-vendedor3 = Vendedor("12345699-3", "Luis", "Gómez", "Juguetería", 0.5)
-vendedor4 = Vendedor("12345655-4", "Ana", "Rodríguez", "Electro", 0.5)
-vendedor5 = Vendedor("12345622-5", "María", "González", "Menaje", 0.5)
+vendedor1 = Vendedor("12345677-1", "Hugo", "Araya", "Zapatería",  5, 50)
+vendedor2 = Vendedor("12345688-2", "Paco", "Iriarte", "Deportes", 5, 51)
+vendedor3 = Vendedor("12345699-3", "Luis", "Gómez", "Juguetería", 5, 52)
+vendedor4 = Vendedor("12345655-4", "Ana", "Rodríguez", "Electro", 5, 53)
+vendedor5 = Vendedor("12345622-5", "María", "González", "Menaje", 5, 54)
 
 #Se debe crear métodos en la clase Cliente, lo cual puedan agregar y mostrar saldo.
 #Como se encuentra trabajando en el desarrollo del módulo de Python Básico, se solicita integrar
