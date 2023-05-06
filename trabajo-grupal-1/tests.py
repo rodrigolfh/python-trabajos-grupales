@@ -15,10 +15,11 @@ producto1.stock(-5, 10, 5)
 print(f"stock de {producto1.nombre} es {producto1.stock()}")
 producto1.stock(-5)
 producto1.stock()
-
 print(f"stock de {producto1.nombre} es {producto1.stock()}")
 print("==================================================")
 print("=========================pruebas de transacciones=========================")
 compra1 = Compra(cliente1, producto1, vendedor1, 10)#para probar desbordado de stock
 compra1 = Compra(cliente1, producto1, vendedor1, 4)
 compra1.procesar_compra()
+print(vendedor1.porcentaje_comision())
+vendedor1.porcentaje_comision("12345677-1", 50)

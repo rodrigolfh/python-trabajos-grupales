@@ -34,24 +34,24 @@ class Vendedor:
         self.nombre = nombre
         self.apellido = apellido
         self.seccion = seccion
-        self.__comision = __comision
+        self.__comision_acumulativa = __comision
         self.edad = edad
         self.__porcentaje_comision = porcentaje_comision
     
-    def set_comision(self, nueva_comision):
-        self.__comision += nueva_comision
+    def set_comision_acumulativa(self, comision):
+        self.__comision_acumulativa += comision
 
-    def get_comision(self):
-        return self.__comision    
+    def get_comision_acumulativa(self):
+        return self.__comision_acumulativa    
     
-    def porcentaje_comision(self, run, porcentaje):
+    def porcentaje_comision(self, run=None, porcentaje=None):
+        if run is None and porcentaje is None:
+            return self.__porcentaje_comision
         if run == self.run:
-            self.__comision = porcentaje
+            self.__porcentaje_comision = porcentaje
             print(f"El vendedor RUT {run} tiene ahora un porcentaje de comisión del {self.__porcentaje_comision}%")
         else:
             print("Vendedor no existe, intente con otro RUT.")
-    def porcentaje_comision(self):
-       return self.__porcentaje_comision
 #============================FIN CLASE VENDEDOR==================================
 
 class Producto:
@@ -117,21 +117,21 @@ class Compra:
             print("N°s originales")
             print(f"saldo de cliente es {self.cliente.saldo()}")
             print(f"stock de producto es {self.producto.stock()}")
-            print(f"comision cumulativa de vendedor es {self.vendedor.get_comision()}")
+            print(f"comision acumulativa de vendedor es {self.vendedor.get_comision_acumulativa()}")
             print(f"Se realizó una compra por ${gasto}")
             #la comision incluirá el impuesto como parte del monto gastado
             #realizamos deducciones y adicion de comision ganada
             self.cliente.saldo(-gasto) 
             self.producto.stock(-self.cantidad)
             print(f"comision es de {self.vendedor.porcentaje_comision()}%")
-            self.vendedor.set_comision(gasto * self.vendedor.porcentaje_comision()/100) 
+            self.vendedor.set_comision_acumulativa(gasto * self.vendedor.porcentaje_comision()/100) 
             #porcentaje comision te devuelve un numero entero representando su cut y multiplicamos por el 
             #valor total para sacar la comision que se va al trabajador, que en los ejemplos es del 5%
             #prints para testear cambios internos
             print("Post transacción:")
             print(f"saldo de cliente es {self.cliente.saldo()}")
             print(f"stock de producto es {self.producto.stock()}")
-            print(f"comision de vendedor es {self.vendedor.get_comision()}")
+            print(f"comision de vendedor es {self.vendedor.get_comision_acumulativa()}")
             print("Compra realizada con éxito.")
             #return nuevo_saldo
         elif(self.producto.stock()<self.cantidad):
