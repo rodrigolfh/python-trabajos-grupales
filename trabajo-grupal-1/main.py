@@ -45,7 +45,7 @@ class Vendedor:
         return self.__comision_acumulativa    
     
     def porcentaje_comision(self, run=None, porcentaje=None):
-        if run is None and porcentaje is None:
+        if run is None or porcentaje is None:
             return self.__porcentaje_comision
         if run == self.run:
             self.__porcentaje_comision = porcentaje
