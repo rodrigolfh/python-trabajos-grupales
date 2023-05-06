@@ -29,14 +29,14 @@ class Cliente:
 #============================FIN CLASE CLIENTE==================================
 
 class Vendedor:
-    def __init__(self, run, nombre, apellido, seccion, porcentage_comision, edad = None, __comision = 0):
+    def __init__(self, run, nombre, apellido, seccion, porcentaje_comision, edad = None, __comision = 0):
         self.run = run
         self.nombre = nombre
         self.apellido = apellido
         self.seccion = seccion
         self.__comision = __comision
         self.edad = edad
-        self.__porcentage_comision = porcentage_comision
+        self.__porcentaje_comision = porcentaje_comision
     
     def set_comision(self, nueva_comision):
         self.__comision += nueva_comision
@@ -47,11 +47,11 @@ class Vendedor:
     def porcentaje_comision(self, run, porcentaje):
         if run == self.run:
             self.__comision = porcentaje
-            print(f"El vendedor RUT {run} tiene ahora un porcentaje de comisión del {self.__porcentage_comision}%")
+            print(f"El vendedor RUT {run} tiene ahora un porcentaje de comisión del {self.__porcentaje_comision}%")
         else:
             print("Vendedor no existe, intente con otro RUT.")
-    def porcentage_comision(self):
-       return self.__porcentage_comision
+    def porcentaje_comision(self):
+       return self.__porcentaje_comision
 #============================FIN CLASE VENDEDOR==================================
 
 class Producto:
@@ -123,9 +123,9 @@ class Compra:
             #realizamos deducciones y adicion de comision ganada
             self.cliente.saldo(-gasto) 
             self.producto.stock(-self.cantidad)
-            print(f"comision es de {self.vendedor.porcentage_comision()}%")
-            self.vendedor.set_comision(gasto * self.vendedor.porcentage_comision()/100) 
-            #porcentage comision te devuelve un numero entero representando su cut y multiplicamos por el 
+            print(f"comision es de {self.vendedor.porcentaje_comision()}%")
+            self.vendedor.set_comision(gasto * self.vendedor.porcentaje_comision()/100) 
+            #porcentaje comision te devuelve un numero entero representando su cut y multiplicamos por el 
             #valor total para sacar la comision que se va al trabajador, que en los ejemplos es del 5%
             #prints para testear cambios internos
             print("Post transacción:")
