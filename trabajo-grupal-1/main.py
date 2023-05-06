@@ -26,13 +26,6 @@ class Cliente:
                 #if cambio_saldo<0: print(f"Saldo de {self.nombre} {self.apellido} actualizado, se descontó ${abs(cambio_saldo)} de saldo, nuevo saldo: {self.__saldo}")
             else: 
                 print("Operación no realizada: no hay saldo suficiente para ejecutar la transacción")
-
-    def set_comision(self, nueva_comision):
-        self.__comision = nueva_comision
-
-    def get_comision(self):
-        return self.__comision    
-    
 #============================FIN CLASE CLIENTE==================================
 
 class Vendedor:
@@ -86,15 +79,6 @@ class Producto:
     def mostrar_impuesto(self, sku):
         print(f"El impuesto del producto SKU {sku} es {self.__impuesto}%")
     
-    def lista(self):
-        pass
-
-    def set_comision(self, nueva_comision):
-        self.__comision += nueva_comision
-
-    def get_comision(self):
-        return self.__comision  
-
     def stock(self, *valor):
             if len(valor) == 0:
                 return self._stock
@@ -104,7 +88,6 @@ class Producto:
                     self._stock += suma
                 else: 
                     print("No hay stock suficiente para ejecutar la transacción")
-            
 #============================FIN CLASE PRODUCTO==================================
 class Proveedor:
     def __init__(self, rut, nombre, razon_social, pais, tipo_persona):
