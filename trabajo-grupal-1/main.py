@@ -15,17 +15,17 @@ class Cliente:
         self.__saldo = saldo #la encapsulacion la hago asi, con __ antes de la definicion del atributo de clase
         self.edad = edad
     
-    @property
-    def saldo(self):
-        return self.__saldo
-    @saldo.setter
-    def saldo(self, cambio):
-        if (cambio)>0: #si la suma (considerando un negativo posiblemente) es mayor a 0
-            self.__saldo = cambio #entonces hace la suma (o resta) de stock.
-            #if cambio_saldo>=0: print(f"Saldo de {self.nombre} {self.apellido} actualizado, se agregó ${cambio_saldo} de saldo, nuevo saldo: {self.__saldo}")
-            #if cambio_saldo<0: print(f"Saldo de {self.nombre} {self.apellido} actualizado, se descontó ${abs(cambio_saldo)} de saldo, nuevo saldo: {self.__saldo}")
-        else: 
-            print("Operación no realizada: no hay saldo suficiente para ejecutar la transacción")
+    def saldo(self, *cambio):
+        if len(cambio) == 0:
+            return self.__saldo
+        else:
+            suma = sum(cambio)
+            if (suma)+self.__saldo>=0: #si la suma (considerando un negativo posiblemente) es mayor a 0
+                self.__saldo += suma #entonces hace la suma (o resta) de stock.
+                #if cambio_saldo>=0: print(f"Saldo de {self.nombre} {self.apellido} actualizado, se agregó ${cambio_saldo} de saldo, nuevo saldo: {self.__saldo}")
+                #if cambio_saldo<0: print(f"Saldo de {self.nombre} {self.apellido} actualizado, se descontó ${abs(cambio_saldo)} de saldo, nuevo saldo: {self.__saldo}")
+            else: 
+                print("Operación no realizada: no hay saldo suficiente para ejecutar la transacción")
 
     def set_comision(self, nueva_comision):
         self.__comision = nueva_comision
@@ -95,22 +95,16 @@ class Producto:
     def get_comision(self):
         return self.__comision  
 
-    @property
-    def stock(self):
-        return self._stock
-
-    @stock.setter
-    def stock(self, cambio):
-                #print(cambio) <<- toma valor entero menos con lo que lo llamaste
-                if (cambio)>0: #si la suma (considerando un negativo posiblemente) es mayor a 0
-                    #suma = self._stock + cambio #entonces hace la suma (o resta) de stock. TA MALO
-                    self._stock = cambio
-                    #este flavor text no funciona asi, necesitaré saber el delta para poder anotar el cambio como parte del return.
-                    #if cambio>=0: print(f"Stock de {self.nombre} actualizado, se agregó ${cambio} de stock, nuevo stock: {self._stock}")
-                    #if cambio<0: print(f"Stock de {self.nombre} actualizado, se descontó ${abs(cambio)} de stock, nuevo stock: {self._stock}")
+    def stock(self, *valor):
+            if len(valor) == 0:
+                return self._stock
+            else:
+                suma = sum(valor)
+                if self._stock+int(suma)>=0: #si la suma (considerando un negativo posiblemente) es mayor a 0
+                    self._stock += suma
                 else: 
                     print("No hay stock suficiente para ejecutar la transacción")
-
+            
 #============================FIN CLASE PRODUCTO==================================
 class Proveedor:
     def __init__(self, rut, nombre, razon_social, pais, tipo_persona):
@@ -135,31 +129,31 @@ class Compra:
         print(f"Valor bruto:  {self.cantidad}*${self.producto.valor_neto} = {self.cantidad*self.producto.valor_neto}")
         print(f"Valor neto:   {self.cantidad}*${self.producto.valor_total} = ${gasto}")
 
-        if (self.producto.stock>=self.cantidad and self.cliente.saldo>=gasto)==True:
+        if (self.producto.stock()>=self.cantidad and self.cliente.saldo()>=gasto)==True:
             
             print("N°s originales")
-            print(f"saldo de cliente es {self.cliente.saldo}")
-            print(f"stock de producto es {self.producto.stock}")
+            print(f"saldo de cliente es {self.cliente.saldo()}")
+            print(f"stock de producto es {self.producto.stock()}")
             print(f"comision cumulativa de vendedor es {self.vendedor.get_comision()}")
             print(f"Se realizó una compra por ${gasto}")
             #la comision incluirá el impuesto como parte del monto gastado
             #realizamos deducciones y adicion de comision ganada
-            self.cliente.saldo -= gasto #estas son asi porque sobrecargan
-            self.producto.stock -= self.cantidad #estas son asi porque sobrecargan
+            self.cliente.saldo(-gasto) 
+            self.producto.stock(-self.cantidad)
             print(f"comision es de {self.vendedor.porcentage_comision()}%")
             self.vendedor.set_comision(gasto * self.vendedor.porcentage_comision()/100) 
             #porcentage comision te devuelve un numero entero representando su cut y multiplicamos por el 
             #valor total para sacar la comision que se va al trabajador, que en los ejemplos es del 5%
             #prints para testear cambios internos
             print("Post transacción:")
-            print(f"saldo de cliente es {self.cliente.saldo}")
-            print(f"stock de producto es {self.producto.stock}")
+            print(f"saldo de cliente es {self.cliente.saldo()}")
+            print(f"stock de producto es {self.producto.stock()}")
             print(f"comision de vendedor es {self.vendedor.get_comision()}")
             print("Compra realizada con éxito.")
             #return nuevo_saldo
-        elif(self.producto.stock<self.cantidad):
+        elif(self.producto.stock()<self.cantidad):
             print("No hay suficientes unidades para concretar la transacción")
-        elif(self.cliente.saldo<gasto):
+        elif(self.cliente.saldo()<gasto):
             print("No tiene saldo suficiente para concretar la transacción")
 #===================================FIN CLASE COMPRA=====================================
 #===================================INSTANCIACIONES DE EJEMPLO=====================================
