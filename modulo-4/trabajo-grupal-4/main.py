@@ -1,3 +1,5 @@
+import time
+
 #Se solicita que los atributos __saldo (Cliente), __Impuesto (Producto) y __Comision (Bodeguero) se
 #encuentren encapsulados. (hecho ok)
 productos = []
@@ -139,12 +141,53 @@ class Compra:
         elif(self.cliente.saldo()<gasto):
             print("No tiene saldo suficiente para concretar la transacción")
 #===================================FIN CLASE COMPRA=====================================
+##se agrega la clase Sucursal
+class Sucursal(Vendedor, Producto):
+    def __init__(self, *vendedores): #se tenía quee elegir con qué inicializar la clase, partimos por las personas, y en métodos se agregan los productos
+        super().__init__(self)
+        self.dict_vendedores = {}
+        self.dict_productos = {}
+        for vendedor in vendedores: self.dict_vendedores[vendedor.rut] = vendedor
+
+#DUDA: con esta clase habría que acceder a todos los métodos a través de esta clase?
+        
+    @property
+    def vendedores(self):
+        return(self.dict_vendedores)
+    
+    @vendedores.setter
+    def vendedores(self, *vendedores): #agrega o modifica vendedores
+        for vendedor in vendedores: 
+            self.dict_vendedores[vendedor.rut] = vendedor
+    
+    @property
+    def productos(self):
+        return(self.dict_productos)
+    
+    @productos.setter
+    def productos(self, *productos): #agrega o modifica productos
+        for producto in productos:
+            self.dict_productos[producto.sku] = producto
+    
+    def auto_check_stock(self):
+        while True:
+            pass
+            
+
+
+        
+
+
+
+
 #===================================INSTANCIACIONES DE EJEMPLO=====================================
+
 proveedor1 = Proveedor("111111111", "Proveedor1", "Falabella", "Mexico", "Persona Juridica")
 proveedor2 = Proveedor("222222222", "Proveedor2", "Ripley", "Chile", "Persona Juridica")
 proveedor3 = Proveedor("333333333", "Proveedor3", "CAT", "USA", "Persona Juridica")
 proveedor4 = Proveedor("444444444", "Proveedor4", "Doite", "USA", "Persona Juridica")
 proveedor5 = Proveedor("555555555", "Proveedor5", "Samsung", "Corea", "Persona Juridica")
+
 
 producto1 = Producto("001", "Producto 1", "Menaje", proveedor1, 5, 19990)
 producto2 = Producto("002", "Producto 2", "Menaje", proveedor2, 100, 9990)
