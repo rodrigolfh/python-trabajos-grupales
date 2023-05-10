@@ -112,10 +112,13 @@ class Empresa:
             print(f"SKU: {key}, STOCK: {value} unidades")
 
     def define_stock(self, sku, nuevo_stock):
-        self.stocks[sku] = nuevo_stock
-
+        try:
+            self.stocks[sku] = nuevo_stock
+        except TypeError:
+            print("Debe ingresar todos los argumentos")
     def stock(self, sku, modificación_stock = None): #obtiene la cantidad de unidades de un sku dado, o redefine si se le entrega además una cantidad
         #mantiene funcionalidad del método stock que tenía la clase Producto
+        
         if modificación_stock == None:
             return(self.stocks[sku])
         
@@ -127,7 +130,7 @@ class Empresa:
         self.límite = límite  #si baja de esto, se pide a bodega
         self.pedido = pedido  #tamaño estándar de pedido a bodega
         self.bodega = bodega  #bodega de la que se sacaría reposición
-
+        
         for key, value in self.stocks.items():
             if self.stocks[key] < self.límite and self.bodega.stock(key) >= self.pedido: #si baja del límite y = o + del límite
                 print(f"Stock del producto SKU {key} ha bajado de {self.límite}. Pidiendo {self.pedido} a {self.bodega}")

@@ -36,3 +36,6 @@ print("bodega", bodega_principal.stocks)
 sucursal_mall_plaza.revisar_stocks(50, 300, bodega_principal)
 print("bodega", bodega_principal.stocks)
 print("sucursal", sucursal_mall_plaza.stocks)
+
+#probar ValueError en función revisar_stocks:
+bodega_principal.define_stock(3, 0) #probando quiebre stock
