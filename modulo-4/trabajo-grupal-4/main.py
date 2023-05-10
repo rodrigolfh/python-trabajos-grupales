@@ -96,9 +96,66 @@ class Proveedor:
         self.razon_social = razon_social
         self.pais = pais
         self.tipo_persona = tipo_persona
+        
 #============================FIN CLASE PROVEEDOR==================================
+##clase Casa_Matriz
 
-##se agrega la clase compra
+class Empresa:
+
+    def __init__(self, nombre_empresa, rut, dirección):
+        self._nombre_empresa = nombre_empresa
+        self._rut = rut
+        self.dirección = dirección
+        #diccionarios vacíos, solo para poder crear métodos que serán heredados por las clases hijas
+        
+    def __str__(self):
+        return(f"{self._nombre_empresa}, {self._rut}, {self.dirección}")
+    
+    def get_vendedor(self, instancia, rut=None): #imprime y retorna un funcionario si se le pasa un rut, y sino los devuelve todos
+        if rut: 
+            print(instancia[rut])
+        else: 
+            for key, value in instancia:
+                print(f"{key}: {value}")
+    
+    def set_vendedor(self, instancia, rut, estado): #pasarle instancia (ej:vendedor.rut) y estado ('activo' o 'inactivo')
+        instancia[rut] = estado
+     
+    def  mostrar_stock(self): #pasarle argumento con método.imprime un dict con los stocks
+        for key, value in self.stocks.items():
+            print(f"SKU: {key}, STOCK: {value} unidades")
+
+    def get_stock(self, sku): #obtiene la cantidad de unidades de un sku dado
+        return(self.stocks[sku])
+
+    def set_stock(self, sku, nuevo_stock): #redefine el stock de un sku
+        self.stocks[sku] = nuevo_stock
+
+class Bodega(Empresa):
+    """funcionarios es una tupla de sólo ruts, stocks es un dict con key asociado a SKU y value la cantidad"""
+    def __init__(self, nombre, dirección, vendedores, stocks): 
+        self._nombre= nombre 
+        self._dirección = dirección
+        self.vendedores = list(vendedores)
+        self.stocks = stocks
+        
+    def __str__(self):
+        return(f"Bodega {self._id}")
+        
+
+## clase sucursal
+class Sucursal(Empresa):
+    def __init__(self, nombre, dirección, vendedores, stocks): 
+        self._id = nombre
+        self._dirección = dirección
+        self.vendedores = list(vendedores)
+        self.stocks = stocks
+
+    def __str__(self):
+        return(f"Sucursal {self._nombre}")
+#============================FIN CLASE SUCURSAL==================================
+
+        ##se agrega la clase compra
 class Compra:
     def __init__(self, cliente, producto, vendedor, cantidad):
         self.cliente = cliente
@@ -151,6 +208,10 @@ producto2 = Producto("002", "Producto 2", "Menaje", proveedor2, 100, 9990)
 producto3 = Producto("003", "Producto 3", "Zapatería", proveedor3, 100, 8990)
 producto4 = Producto("004", "Producto 4", "Deportes", proveedor4, 100, 5990)
 producto5 = Producto("005", "Producto 5", "Electro", proveedor5, 100, 29990)
+
+telovendo = Empresa("Te Lo Vendo", "1234567-9", "La Punta del Cerro s/n")
+bodega_principal = Bodega("001", "Calle 1 sin número", (), {"001": 1000,"002": 1000,"003": 1000,"004": 1000,"005": 1000})
+
 
 vendedor1 = Vendedor("12345677-1", "Hugo", "Araya", "Zapatería",  5, 50)
 vendedor2 = Vendedor("12345688-2", "Paco", "Iriarte", "Deportes", 5, 51)
