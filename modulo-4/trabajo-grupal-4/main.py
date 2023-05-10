@@ -127,28 +127,27 @@ class Empresa:
     def set_stock(self, sku, nuevo_stock): #redefine el stock de un sku
         self.stocks[sku] = nuevo_stock
 
-    def revisar_stocks(self): #revisa si stocks bajan de cierto número para pedir más a bodega.
-        límite = 50 #si baja de esto, se pide a bodega
-        pedido = 300 #tamaño pedido a bodega
-        bodega = bodega_principal
+    def revisar_stocks(self, límite, pedido, bodega): #revisa si stocks bajan de cierto número para pedir más a bodega.
+        self.límite = límite  #si baja de esto, se pide a bodega
+        self.pedido = pedido  #tamaño estándar de pedido a bodega
+        self.bodega = bodega  #bodega de la que se sacaría reposición
 
         for key, value in self.stocks.items():
-            if self.stocks[key] < límite and bodega.get_stock(key) >= pedido: #si baja del límite y = o + del límite
-                print(f"Stock del producto SKU {key} ha bajado de 50. Pidiendo {pedido} a {bodega}")
-                bodega.set_stock(key, (bodega.get_stock(key)-pedido)) #descuenta de bodega                    
-                self.set_stock(key, (self.get_stock(key)+pedido)) #agrega a sucursal
-                print(f"Se ha repuesto {pedido} al stock del producto SKU: {key}")
+            if self.stocks[key] < self.límite and self.bodega.get_stock(key) >= self.pedido: #si baja del límite y = o + del límite
+                print(f"Stock del producto SKU {key} ha bajado de {self.límite}. Pidiendo {self.pedido} a {self.bodega}")
+                self.bodega.set_stock(key, (self.bodega.get_stock(key)-self.pedido)) #descuenta de bodega                    
+                self.set_stock(key, (self.get_stock(key)+self.pedido)) #agrega a sucursal
+                print(f"Se ha repuesto {self.pedido} al stock del producto SKU: {key}")
             
-            elif self.stocks[key] < límite and bodega.get_stock(key) == 0:
+            elif self.stocks[key] < self.límite and self.bodega.get_stock(key) == 0:
                 print(f"El producto SKU: {key} tiene sólo {value} unidades y se agotó en bodega")
             
-            elif (self.stocks[key] < límite) and (bodega.get_stock(key) < pedido): #sino se pide todo lo que haya
-                lo_que_queda = bodega.get_stock(key)
+            elif (self.stocks[key] < self.límite) and (self.bodega.get_stock(key) < self.pedido): #sino se pide todo lo que haya
+                lo_que_queda = self.bodega.get_stock(key)
                 self.set_stock(key, (self.get_stock(key)+lo_que_queda)) #agrega a sucursal lo que quedaba en bodega
-                bodega.set_stock(key, 0)
+                self.bodega.set_stock(key, 0)
                 print(f"Solo quedaban {lo_que_queda} unidades del producto SKU:{key}, se repusieron todas")
-
-    
+ 
 
 
 
