@@ -1,4 +1,4 @@
-
+import main
 from main import *
 
 #cliente1 = Cliente("id1", "Ignacio", "Fuentealba", "correo@gmail.com", "25-enero", 25000000)
