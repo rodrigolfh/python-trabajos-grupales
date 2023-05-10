@@ -91,7 +91,6 @@ class Proveedor:
         
 #============================FIN CLASE PROVEEDOR==================================
 ##clase Casa_Matriz
-<<<<<<< HEAD
 
 class Empresa:
 
@@ -172,82 +171,6 @@ class Sucursal(Empresa):
         self.colaboradores = list(colaboradores)
         self.stocks = stocks
 
-=======
-
-class Empresa:
-
-    def __init__(self, nombre_empresa, rut, dirección):
-        self._nombre_empresa = nombre_empresa
-        self._rut = rut
-        self.dirección = dirección
-        #diccionarios vacíos, solo para poder crear métodos que serán heredados por las clases hijas
-        
-    def __str__(self):
-        return(f"{self._nombre_empresa}, {self._rut}, {self.dirección}")
-    
-    def get_colaboradores(self):
-            print(self.colaboradores)
-            
-    def set_colaborador(self, rut, estado): #pasarle instancia (ej:vendedor.rut) y estado ('activo' o 'inactivo')
-        self.colaboradores[rut] = estado
-     
-    def  mostrar_stock(self): #pasarle argumento con método.imprime un dict con los stocks
-        for key, value in self.stocks.items():
-            print(f"SKU: {key}, STOCK: {value} unidades")
-
-    def get_stock(self, sku): #obtiene la cantidad de unidades de un sku dado
-        return(self.stocks[sku])
-
-    def set_stock(self, sku, nuevo_stock): #redefine el stock de un sku
-        self.stocks[sku] = nuevo_stock
-
-    def revisar_stocks(self): #revisa si stocks bajan de cierto número para pedir más a bodega.
-        límite = 50 #si baja de esto, se pide a bodega
-        pedido = 300 #tamaño pedido a bodega
-        bodega = bodega_principal
-
-        for key, value in self.stocks.items():
-            if self.stocks[key] < límite and bodega.get_stock(key) >= pedido: #si baja del límite y = o + del límite
-                print(f"Stock del producto SKU {key} ha bajado de 50. Pidiendo {pedido} a {bodega}")
-                bodega.set_stock(key, (bodega.get_stock(key)-pedido)) #descuenta de bodega                    
-                self.set_stock(key, (self.get_stock(key)+pedido)) #agrega a sucursal
-                print(f"Se ha repuesto {pedido} al stock del producto SKU: {key}")
-            
-            elif self.stocks[key] < límite and bodega.get_stock(key) == 0:
-                print(f"El producto SKU: {key} tiene sólo {value} unidades y se agotó en bodega")
-            
-            elif (self.stocks[key] < límite) and (bodega.get_stock(key) < pedido): #sino se pide todo lo que haya
-                lo_que_queda = bodega.get_stock(key)
-                self.set_stock(key, (self.get_stock(key)+lo_que_queda)) #agrega a sucursal lo que quedaba en bodega
-                bodega.set_stock(key, 0)
-                print(f"Solo quedaban {lo_que_queda} unidades del producto SKU:{key}, se repusieron todas")
-
-    
-
-
-
-
-class Bodega(Empresa):
-    """funcionarios es un dict con key ruts y value "activo" o "inactivo", stocks es un dict con key asociado a SKU y value la cantidad"""
-    def __init__(self, nombre, dirección, colaboradores, stocks): 
-        self._id= nombre 
-        self._dirección = dirección
-        self.colaboradores = list(colaboradores)
-        self.stocks = stocks
-
-    def __str__(self):
-        return(f"Bodega {self._id}")
-        
-
-## clase sucursal
-class Sucursal(Empresa):
-    def __init__(self, nombre, dirección, colaboradores, stocks): 
-        self._id = nombre
-        self._dirección = dirección
-        self.colaboradores = list(colaboradores)
-        self.stocks = stocks
-
->>>>>>> testing
     def __str__(self):
         return(f"Sucursal {self._nombre}")
 #============================FIN CLASE SUCURSAL==================================
@@ -346,7 +269,6 @@ proveedor3 = Proveedor("333333333", "Proveedor3", "CAT", "USA", "Persona Juridic
 proveedor4 = Proveedor("444444444", "Proveedor4", "Doite", "USA", "Persona Juridica")
 proveedor5 = Proveedor("555555555", "Proveedor5", "Samsung", "Corea", "Persona Juridica")
 
-<<<<<<< HEAD
 producto1 = Producto("001", "Producto 1", "Menaje", proveedor1, 19990)
 producto2 = Producto("002", "Producto 2", "Menaje", proveedor2, 9990)
 producto3 = Producto("003", "Producto 3", "Zapatería", proveedor3, 8990)
@@ -357,14 +279,6 @@ telovendo = Empresa("Te Lo Vendo", "1234567-9", "La Punta del Cerro s/n")
 bodega_principal = Bodega("001", "Calle 1 sin número", {"12345677-1": True, "12345688-2": True, "12345655-4": True}, {"001": 10000,"002": 10000,"003": 10000,"004": 10000,"005": 10000})
 sucursal_mall_plaza = Sucursal("001", "Calle 2 sin número", {"12345677-1": True, "12345688-2": True, "12345655-4": True}, {"001": 1000,"002": 1000,"003": 1000,"004": 1000,"005": 1000})
 
-=======
-
-producto1 = Producto("001", "Producto 1", "Menaje", proveedor1, 5, 19990)
-producto2 = Producto("002", "Producto 2", "Menaje", proveedor2, 100, 9990)
-producto3 = Producto("003", "Producto 3", "Zapatería", proveedor3, 100, 8990)
-producto4 = Producto("004", "Producto 4", "Deportes", proveedor4, 100, 5990)
-producto5 = Producto("005", "Producto 5", "Electro", proveedor5, 100, 29990)
->>>>>>> testing
 
 telovendo = Empresa("Te Lo Vendo", "1234567-9", "La Punta del Cerro s/n")
 bodega_principal = Bodega("001", "Calle 1 sin número", {"12345677-1": True, "12345688-2": True, "12345655-4": True}, {"001": 10000,"002": 10000,"003": 10000,"004": 10000,"005": 10000})
