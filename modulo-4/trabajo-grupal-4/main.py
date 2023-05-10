@@ -56,7 +56,7 @@ class Vendedor:
 
 class Producto:
     
-    def __init__(self, sku, nombre, categoria, proveedor, stock, valor_neto, color = None):
+    def __init__(self, sku, nombre, categoria, proveedor, valor_neto, color = None):
         self.sku = sku
         self.nombre = nombre
         self.categoria = categoria
@@ -64,7 +64,6 @@ class Producto:
         self.valor_neto = valor_neto
         self.__impuesto = 19
         self.valor_total = valor_neto + int(round(valor_neto * (self.__impuesto/100)))
-        self._stock = stock
         self.color = color
     
     def definir_impuesto_producto(self, sku, porcentaje_impuesto):
@@ -87,7 +86,7 @@ class Producto:
                 if self._stock+int(suma)>=0: #si la suma (considerando un negativo posiblemente) es mayor a 0
                     self._stock += suma
                 else: 
-                    print("No hay stock suficiente para ejecutar la transacción")
+                    print("No hay stock suficiente para ejecutar la transacción")  #####################TRASPASAR ESTA FUNCIONALIDAD
 #============================FIN CLASE PRODUCTO==================================
 class Proveedor:
     def __init__(self, rut, nombre, razon_social, pais, tipo_persona):
@@ -121,11 +120,13 @@ class Empresa:
         for key, value in self.stocks.items():
             print(f"SKU: {key}, STOCK: {value} unidades")
 
-    def get_stock(self, sku): #obtiene la cantidad de unidades de un sku dado
-        return(self.stocks[sku])
-
-    def set_stock(self, sku, nuevo_stock): #redefine el stock de un sku
-        self.stocks[sku] = nuevo_stock
+    def stock(self, sku, nuevo_stock = None): #obtiene la cantidad de unidades de un sku dado, o redefine si se le entrega además una cantidad
+        #mantiene funcionalidad del método stock que tenía la clase Producto
+        if nuevo_stock == None:
+            return(self.stocks[sku])
+        
+        elif nuevo_stock > 0:
+            self.stocks[sku] = nuevo_stock
 
     def revisar_stocks(self, límite, pedido, bodega): #revisa si stocks bajan de cierto número para pedir más a bodega.
         self.límite = límite  #si baja de esto, se pide a bodega
@@ -133,19 +134,19 @@ class Empresa:
         self.bodega = bodega  #bodega de la que se sacaría reposición
 
         for key, value in self.stocks.items():
-            if self.stocks[key] < self.límite and self.bodega.get_stock(key) >= self.pedido: #si baja del límite y = o + del límite
+            if self.stocks[key] < self.límite and self.bodega.stock(key) >= self.pedido: #si baja del límite y = o + del límite
                 print(f"Stock del producto SKU {key} ha bajado de {self.límite}. Pidiendo {self.pedido} a {self.bodega}")
-                self.bodega.set_stock(key, (self.bodega.get_stock(key)-self.pedido)) #descuenta de bodega                    
-                self.set_stock(key, (self.get_stock(key)+self.pedido)) #agrega a sucursal
+                self.bodega.stock(key, (self.bodega.stock(key)-self.pedido)) #descuenta de bodega                    
+                self.stock(key, (self.stock(key)+self.pedido)) #agrega a sucursal
                 print(f"Se ha repuesto {self.pedido} al stock del producto SKU: {key}")
             
-            elif self.stocks[key] < self.límite and self.bodega.get_stock(key) == 0:
+            elif self.stocks[key] < self.límite and self.bodega.stock(key) == 0:
                 print(f"El producto SKU: {key} tiene sólo {value} unidades y se agotó en bodega")
             
-            elif (self.stocks[key] < self.límite) and (self.bodega.get_stock(key) < self.pedido): #sino se pide todo lo que haya
-                lo_que_queda = self.bodega.get_stock(key)
-                self.set_stock(key, (self.get_stock(key)+lo_que_queda)) #agrega a sucursal lo que quedaba en bodega
-                self.bodega.set_stock(key, 0)
+            elif (self.stocks[key] < self.límite) and (self.bodega.stock(key) < self.pedido): #sino, se pide todo lo que quede en la bodega de ese sku
+                lo_que_queda = self.bodega.stock(key)
+                self.stock(key, (self.stock(key)+lo_que_queda)) #agrega a sucursal lo que quedaba en bodega
+                self.bodega.stock(key, 0)
                 print(f"Solo quedaban {lo_que_queda} unidades del producto SKU:{key}, se repusieron todas")
  
 
@@ -190,6 +191,10 @@ class Compra:
         print(f"Valor bruto:  {self.cantidad}*${self.producto.valor_neto} = {self.cantidad*self.producto.valor_neto}")
         print(f"Valor neto:   {self.cantidad}*${self.producto.valor_total} = ${gasto}")
 
+
+####################cambiar referencia a la de stock dentro de sucursal.... agregar agumento de sucursal y bodega asociada?
+
+
         if (self.producto.stock()>=self.cantidad and self.cliente.saldo()>=gasto)==True:
             
             print("N°s originales")
@@ -224,11 +229,11 @@ proveedor3 = Proveedor("333333333", "Proveedor3", "CAT", "USA", "Persona Juridic
 proveedor4 = Proveedor("444444444", "Proveedor4", "Doite", "USA", "Persona Juridica")
 proveedor5 = Proveedor("555555555", "Proveedor5", "Samsung", "Corea", "Persona Juridica")
 
-producto1 = Producto("001", "Producto 1", "Menaje", proveedor1, 5, 19990)
-producto2 = Producto("002", "Producto 2", "Menaje", proveedor2, 100, 9990)
-producto3 = Producto("003", "Producto 3", "Zapatería", proveedor3, 100, 8990)
-producto4 = Producto("004", "Producto 4", "Deportes", proveedor4, 100, 5990)
-producto5 = Producto("005", "Producto 5", "Electro", proveedor5, 100, 29990)
+producto1 = Producto("001", "Producto 1", "Menaje", proveedor1, 19990)
+producto2 = Producto("002", "Producto 2", "Menaje", proveedor2, 9990)
+producto3 = Producto("003", "Producto 3", "Zapatería", proveedor3, 8990)
+producto4 = Producto("004", "Producto 4", "Deportes", proveedor4, 5990)
+producto5 = Producto("005", "Producto 5", "Electro", proveedor5, 29990)
 
 telovendo = Empresa("Te Lo Vendo", "1234567-9", "La Punta del Cerro s/n")
 bodega_principal = Bodega("001", "Calle 1 sin número", {"12345677-1": True, "12345688-2": True, "12345655-4": True}, {"001": 10000,"002": 10000,"003": 10000,"004": 10000,"005": 10000})
