@@ -14,6 +14,9 @@ class Cliente:
     def agregar_saldo(self, saldo, id_cliente):
         if id_cliente == self.id_cliente:
             print("El saldo inicial es de: ", self.__saldo)
+            
+            
+    
             self.__saldo += saldo
             print("Se agrego el saldo de: ", saldo)
             print("El saldo nuevo es de: ", self.__saldo)
