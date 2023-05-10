@@ -26,6 +26,7 @@ vendedor1.porcentaje_comision("12345677-1", 50)
 
 print("pruebas nuevas clases Sucursal y Bodega")
 print("sucursal", sucursal_mall_plaza.stocks)
+<<<<<<< HEAD
 sucursal_mall_plaza.stock("001", 49) #agrega stock
 sucursal_mall_plaza.stock("002", -47) #quita stock
 sucursal_mall_plaza.stock("004", 46) #agrega stock
@@ -34,5 +35,15 @@ bodega_principal.define_stock("005", 199) #probando stock menor a límite
 print("sucursal", sucursal_mall_plaza.stocks)
 print("bodega", bodega_principal.stocks)
 sucursal_mall_plaza.revisar_stocks(50, 300, bodega_principal)
+=======
+sucursal_mall_plaza.set_stock("002", 49)
+sucursal_mall_plaza.set_stock("003", 47)
+sucursal_mall_plaza.set_stock("005", 46)
+bodega_principal.set_stock("003", 0)
+bodega_principal.set_stock("005", 199)
+print("sucursal", sucursal_mall_plaza.stocks)
+print("bodega", bodega_principal.stocks)
+sucursal_mall_plaza.revisar_stocks()
+>>>>>>> testing
 print("bodega", bodega_principal.stocks)
 print("sucursal", sucursal_mall_plaza.stocks)
