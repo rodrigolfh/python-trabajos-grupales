@@ -10,27 +10,27 @@ clientes.append(cliente1)
 #cliente1.saldo -= 5
 #print(f"Saldo de {cliente1.nombre} es {cliente1.saldo}")
 #print("==================================================")
-print(f"stock de {producto1.nombre} es {producto1.stock()}")
-producto1.stock(-5, 10, 5)
-print(f"stock de {producto1.nombre} es {producto1.stock()}")
-producto1.stock(-5)
-producto1.stock()
-print(f"stock de {producto1.nombre} es {producto1.stock()}")
+print(f"stock de producto SKU:{producto1.sku} es de {sucursal_mall_plaza.stock('001')}")
+sucursal_mall_plaza.stock("001", +5)
+print(f"stock de producto SKU:{producto1.sku} es de {sucursal_mall_plaza.stock('001')}")
+sucursal_mall_plaza.stock("001", -5)
+print(f"stock de producto SKU:{producto1.sku} es de {sucursal_mall_plaza.stock('001')}")
+
 print("==================================================")
 print("=========================pruebas de transacciones=========================")
-compra1 = Compra(cliente1, producto1, vendedor1, 10)#para probar desbordado de stock
-compra1 = Compra(cliente1, producto1, vendedor1, 4)
+compra1 = Compra(cliente1, producto1, sucursal_mall_plaza, vendedor1, 1001)#para probar desbordado de stock
+compra1 = Compra(cliente1, producto1, sucursal_mall_plaza, vendedor1, 4)
 compra1.procesar_compra()
 print(vendedor1.porcentaje_comision())
 vendedor1.porcentaje_comision("12345677-1", 50)
 
 print("pruebas nuevas clases Sucursal y Bodega")
 print("sucursal", sucursal_mall_plaza.stocks)
-sucursal_mall_plaza.set_stock("002", 49)
-sucursal_mall_plaza.set_stock("003", 47)
-sucursal_mall_plaza.set_stock("005", 46)
-bodega_principal.set_stock("003", 0)
-bodega_principal.set_stock("005", 199)
+sucursal_mall_plaza.stock("001", 49) #agrega stock
+sucursal_mall_plaza.stock("002", -47) #quita stock
+sucursal_mall_plaza.stock("004", 46) #agrega stock
+bodega_principal.define_stock("003", 0) #probando quiebre stock
+bodega_principal.define_stock("005", 199) #probando stock menor a límite
 print("sucursal", sucursal_mall_plaza.stocks)
 print("bodega", bodega_principal.stocks)
 sucursal_mall_plaza.revisar_stocks(50, 300, bodega_principal)

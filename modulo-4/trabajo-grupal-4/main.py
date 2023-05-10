@@ -78,15 +78,6 @@ class Producto:
     def mostrar_impuesto(self, sku):
         print(f"El impuesto del producto SKU {sku} es {self.__impuesto}%")
     
-    def stock(self, *valor):
-            if len(valor) == 0:
-                return self._stock
-            else:
-                suma = sum(valor)
-                if self._stock+int(suma)>=0: #si la suma (considerando un negativo posiblemente) es mayor a 0
-                    self._stock += suma
-                else: 
-                    print("No hay stock suficiente para ejecutar la transacción")  #####################TRASPASAR ESTA FUNCIONALIDAD
 #============================FIN CLASE PRODUCTO==================================
 class Proveedor:
     def __init__(self, rut, nombre, razon_social, pais, tipo_persona):
@@ -120,13 +111,17 @@ class Empresa:
         for key, value in self.stocks.items():
             print(f"SKU: {key}, STOCK: {value} unidades")
 
-    def stock(self, sku, nuevo_stock = None): #obtiene la cantidad de unidades de un sku dado, o redefine si se le entrega además una cantidad
+    def define_stock(self, sku, nuevo_stock):
+        self.stocks[sku] = nuevo_stock
+
+    def stock(self, sku, modificación_stock = None): #obtiene la cantidad de unidades de un sku dado, o redefine si se le entrega además una cantidad
         #mantiene funcionalidad del método stock que tenía la clase Producto
-        if nuevo_stock == None:
+        if modificación_stock == None:
             return(self.stocks[sku])
         
-        elif nuevo_stock > 0:
-            self.stocks[sku] = nuevo_stock
+        elif modificación_stock:
+            self.stocks[sku] += modificación_stock
+            print(f"El producto SKU:{sku} tiene se modificó así: {modificación_stock:+}.") #:+ muestra el signo, sino cuando es positivo no se ve
 
     def revisar_stocks(self, límite, pedido, bodega): #revisa si stocks bajan de cierto número para pedir más a bodega.
         self.límite = límite  #si baja de esto, se pide a bodega
@@ -136,8 +131,8 @@ class Empresa:
         for key, value in self.stocks.items():
             if self.stocks[key] < self.límite and self.bodega.stock(key) >= self.pedido: #si baja del límite y = o + del límite
                 print(f"Stock del producto SKU {key} ha bajado de {self.límite}. Pidiendo {self.pedido} a {self.bodega}")
-                self.bodega.stock(key, (self.bodega.stock(key)-self.pedido)) #descuenta de bodega                    
-                self.stock(key, (self.stock(key)+self.pedido)) #agrega a sucursal
+                self.bodega.stock(key, -self.pedido) #descuenta de bodega                    
+                self.stock(key, +self.pedido) #agrega a sucursal
                 print(f"Se ha repuesto {self.pedido} al stock del producto SKU: {key}")
             
             elif self.stocks[key] < self.límite and self.bodega.stock(key) == 0:
@@ -145,8 +140,9 @@ class Empresa:
             
             elif (self.stocks[key] < self.límite) and (self.bodega.stock(key) < self.pedido): #sino, se pide todo lo que quede en la bodega de ese sku
                 lo_que_queda = self.bodega.stock(key)
-                self.stock(key, (self.stock(key)+lo_que_queda)) #agrega a sucursal lo que quedaba en bodega
-                self.bodega.stock(key, 0)
+                self.bodega.stock(key, -lo_que_queda)
+                self.stock(key, +lo_que_queda) #agrega a sucursal lo que quedaba en bodega
+                
                 print(f"Solo quedaban {lo_que_queda} unidades del producto SKU:{key}, se repusieron todas")
  
 
@@ -179,14 +175,16 @@ class Sucursal(Empresa):
 
         ##se agrega la clase compra
 class Compra:
-    def __init__(self, cliente, producto, vendedor, cantidad):
+    def __init__(self, cliente, producto, sucursal, vendedor, cantidad):
         self.cliente = cliente
-        self.producto = producto
+        self.producto = producto #SKU
+        self.sucursal = sucursal
         self.vendedor = vendedor
         self.cantidad = cantidad
     
     def procesar_compra(self):
         gasto = self.cantidad*self.producto.valor_total #el gasto del cliente debe incluir el impuesto
+        
         print("Detalle de la transacción:")
         print(f"Valor bruto:  {self.cantidad}*${self.producto.valor_neto} = {self.cantidad*self.producto.valor_neto}")
         print(f"Valor neto:   {self.cantidad}*${self.producto.valor_total} = ${gasto}")
@@ -195,17 +193,17 @@ class Compra:
 ####################cambiar referencia a la de stock dentro de sucursal.... agregar agumento de sucursal y bodega asociada?
 
 
-        if (self.producto.stock()>=self.cantidad and self.cliente.saldo()>=gasto)==True:
+        if (self.sucursal.stock(self.producto.sku)>=self.cantidad and self.cliente.saldo()>=gasto)==True:
             
             print("N°s originales")
             print(f"saldo de cliente es {self.cliente.saldo()}")
-            print(f"stock de producto es {self.producto.stock()}")
+            print(f"stock de producto es {self.sucursal.stock(self.producto.sku)}")
             print(f"comision acumulativa de vendedor es {self.vendedor.get_comision_acumulativa()}")
             print(f"Se realizó una compra por ${gasto}")
             #la comision incluirá el impuesto como parte del monto gastado
             #realizamos deducciones y adicion de comision ganada
             self.cliente.saldo(-gasto) 
-            self.producto.stock(-self.cantidad)
+            self.sucursal.stock(self.producto.sku, -self.cantidad)
             print(f"comision es de {self.vendedor.porcentaje_comision()}%")
             self.vendedor.set_comision_acumulativa(gasto * self.vendedor.porcentaje_comision()/100) 
             #porcentaje comision te devuelve un numero entero representando su cut y multiplicamos por el 
@@ -213,11 +211,11 @@ class Compra:
             #prints para testear cambios internos
             print("Post transacción:")
             print(f"saldo de cliente es {self.cliente.saldo()}")
-            print(f"stock de producto es {self.producto.stock()}")
+            print(f"stock de producto es {self.sucursal.stock(self.producto.sku)}")
             print(f"comision de vendedor es {self.vendedor.get_comision_acumulativa()}")
             print("Compra realizada con éxito.")
             #return nuevo_saldo
-        elif(self.producto.stock()<self.cantidad):
+        elif(self.sucursal.stock(self.producto.sku)<self.cantidad):
             print("No hay suficientes unidades para concretar la transacción")
         elif(self.cliente.saldo()<gasto):
             print("No tiene saldo suficiente para concretar la transacción")
