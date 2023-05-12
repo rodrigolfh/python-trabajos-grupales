@@ -1,5 +1,5 @@
 import time
-
+from email_validator import validate_email, EmailNotValidError
 #Se solicita que los atributos __saldo (Cliente), __Impuesto (Producto) y __Comision (Bodeguero) se
 #encuentren encapsulados. (hecho ok)
 productos = []
@@ -16,6 +16,18 @@ class Cliente:
         self.fecha_registro = fecha_Registro
         self.__saldo = saldo #la encapsulacion la hago asi, con __ antes de la definicion del atributo de clase
         self.edad = edad
+
+    def check(email):
+    try:
+      # validate and get info
+        v = validate_email(email)
+        # replace with normalized form
+        email = v["email"] 
+        print("True")
+    except EmailNotValidError as e:
+        # email is not valid, exception message is human-readable
+        print(str(e))
+
     
     def saldo(self, *cambio):
         if len(cambio) == 0:
@@ -274,11 +286,5 @@ cliente3 = Cliente("id3", "Pedro", "Gomez", "XXXXXXXXXXXXXXX", "20-enero", 0)
 cliente4 = Cliente("id4", "Maria", "Lopez", "XXXXXXXXXXXXXXX", "20-marzo", 0)
 cliente5 = Cliente("id5", "Luis", "Gonzalez", "XXXXXXXXXXXXXXX", "20-febrero", 0)
 
-#probar método vender
-compra1 = Compra(cliente2, producto1, sucursal_mall_plaza, vendedor3, 10, True)
-vendedor3.vender(compra1)
-
-compra2 = Compra(cliente1, producto3, sucursal_mall_plaza, vendedor1, 10, False)
-vendedor1.vender(compra2)
 
 
