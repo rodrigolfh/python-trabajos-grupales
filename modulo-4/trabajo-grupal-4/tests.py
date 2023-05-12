@@ -20,6 +20,7 @@ print("=========================pruebas de transacciones========================
 #compra1 = Compra(cliente1, producto1, sucursal_mall_plaza, vendedor1, 1001)#para probar desbordado de stock
 #compra1 = Compra(cliente1, producto1, sucursal_mall_plaza, vendedor1, 4)
 <<<<<<< HEAD
+<<<<<<< HEAD
 compra1 = Compra(cliente2, producto1, sucursal_mall_plaza, vendedor3, 10, True) 
 =======
 compra1 = Compra(cliente2, producto1, sucursal_mall_plaza, vendedor3, 10, True)
@@ -32,7 +33,19 @@ compra1.procesar_compra()
 compra2.procesar_compra()
 print(vendedor1.porcentaje_comision())
 vendedor1.porcentaje_comision("12345677-1", 50)
+=======
+ocv20231 = OrdenCompra(producto1, True)
+ocv20232 = OrdenCompra(producto2, False)
+>>>>>>> 44fd2eefc14bc3e645544bb4832c8c8d45546f69
 
+compra1 = Compra(cliente1, ocv20231, sucursal_mall_plaza, 10)
+#vendedor3.vender(compra1)
+compra2 = Compra(cliente1, ocv20232, sucursal_mall_plaza, 10)
+vendedor1.vender(compra1)
+#compra1.procesar_compra()
+#compra2.procesar_compra()
+#vendedor1.porcentaje_comision("12345677-1", 50)
+print("==================================================")
 print("pruebas nuevas clases Sucursal y Bodega")
 print("sucursal", sucursal_mall_plaza.stocks)
 sucursal_mall_plaza.stock("001", 49) #agrega stock
