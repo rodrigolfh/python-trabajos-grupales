@@ -54,7 +54,20 @@ class Vendedor:
             print(f"El vendedor RUT {run} tiene ahora un porcentaje de comisión del {self.__porcentaje_comision}%")
         else:
             print("Vendedor no existe, intente con otro RUT.")
+            
+    def vender(self, compra):
+        if compra.con_despacho == True:
+            total_compra = compra.producto.valor_total * compra.cantidad 
+            total_compra*= 1.1  # Aplicar un recargo del 10%
+            print(f"Se aplicó un recargo por despacho. Nuevo valor de compra: ${round(total_compra)}")
+            self.total_final_compra = total_compra
+        else:
+            total_compra = compra.producto.valor_total * compra.cantidad 
+            print("No se aplicó recargo por despacho.")
+        
+   
 #============================FIN CLASE VENDEDOR==================================
+
 
 class Producto:
     
@@ -179,20 +192,20 @@ class Sucursal(Empresa):
 
         ##se agrega la clase compra
 class Compra:
-    def __init__(self, cliente, producto, sucursal, vendedor, cantidad):
+    def __init__(self, cliente, producto, sucursal, vendedor, cantidad, con_despacho):
         self.cliente = cliente
         self.producto = producto #SKU
         self.sucursal = sucursal
         self.vendedor = vendedor
         self.cantidad = cantidad
-    
+        self.con_despacho = con_despacho
+        
     def procesar_compra(self):
         gasto = self.cantidad*self.producto.valor_total #el gasto del cliente debe incluir el impuesto
         
         print("Detalle de la transacción:")
         print(f"Valor bruto:  {self.cantidad}*${self.producto.valor_neto} = {self.cantidad*self.producto.valor_neto}")
         print(f"Valor neto:   {self.cantidad}*${self.producto.valor_total} = ${gasto}")
-
 
 ####################cambiar referencia a la de stock dentro de sucursal.... agregar agumento de sucursal y bodega asociada?
 
@@ -223,6 +236,9 @@ class Compra:
             print("No hay suficientes unidades para concretar la transacción")
         elif(self.cliente.saldo()<gasto):
             print("No tiene saldo suficiente para concretar la transacción")
+            
+
+             
 #===================================FIN CLASE COMPRA=====================================
 #===================================INSTANCIACIONES DE EJEMPLO=====================================
 proveedor1 = Proveedor("111111111", "Proveedor1", "Falabella", "Mexico", "Persona Juridica")
@@ -241,6 +257,7 @@ telovendo = Empresa("Te Lo Vendo", "1234567-9", "La Punta del Cerro s/n")
 bodega_principal = Bodega("001", "Calle 1 sin número", {"12345677-1": True, "12345688-2": True, "12345655-4": True}, {"001": 10000,"002": 10000,"003": 10000,"004": 10000,"005": 10000})
 sucursal_mall_plaza = Sucursal("001", "Calle 2 sin número", {"12345677-1": True, "12345688-2": True, "12345655-4": True}, {"001": 1000,"002": 1000,"003": 1000,"004": 1000,"005": 1000})
 
+    
 
 vendedor1 = Vendedor("12345677-1", "Hugo", "Araya", "Zapatería",  5, 50)
 vendedor2 = Vendedor("12345688-2", "Paco", "Iriarte", "Deportes", 5, 51)
@@ -256,6 +273,13 @@ cliente2 = Cliente("id2", "Juan", "Perez", "pepo@hotmail.com", "15-enero", 0)
 cliente3 = Cliente("id3", "Pedro", "Gomez", "XXXXXXXXXXXXXXX", "20-enero", 0)
 cliente4 = Cliente("id4", "Maria", "Lopez", "XXXXXXXXXXXXXXX", "20-marzo", 0)
 cliente5 = Cliente("id5", "Luis", "Gonzalez", "XXXXXXXXXXXXXXX", "20-febrero", 0)
+
+#probar método vender
+compra1 = Compra(cliente2, producto1, sucursal_mall_plaza, vendedor3, 10, True)
+vendedor3.vender(compra1)
+
+compra2 = Compra(cliente1, producto3, sucursal_mall_plaza, vendedor1, 10, False)
+vendedor1.vender(compra2)
 
 
 def menu_principal():
