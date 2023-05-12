@@ -1,9 +1,10 @@
 import time
+from email_validator import validate_email, EmailNotValidError
+from excepciones import NoSeraMuchoException
 
-#Se solicita que los atributos __saldo (Cliente), __Impuesto (Producto) y __Comision (Bodeguero) se
-#encuentren encapsulados. (hecho ok)
 productos = []
 clientes = []
+
 
 class Cliente:
     def __init__(self, id_cliente, nombre, apellido, correo, fecha_Registro, saldo, edad = None):
@@ -15,8 +16,32 @@ class Cliente:
         self.correo = correo
         self.fecha_registro = fecha_Registro
         self.__saldo = saldo #la encapsulacion la hago asi, con __ antes de la definicion del atributo de clase
+
         self.edad = edad
+
+    def check(email):
+    try:
+      
+        v = validate_email(email)
+        
+        email = v["email"] 
+        print("True")
+    except EmailNotValidError as e:
+       
+        print(str(e))
+
     
+
+        try:
+            self.edad = int(edad)
+        except ValueError:
+            print("ValueError: EDAD debe ser un entero")
+        except TypeError:
+            print("TypeError: EDAD debe ser un entero")
+        self._total_compras = 0
+        self._total_gastado = 0
+            
+
     def saldo(self, *cambio):
         if len(cambio) == 0:
             return self.__saldo
@@ -28,6 +53,23 @@ class Cliente:
                 #if cambio_saldo<0: print(f"Saldo de {self.nombre} {self.apellido} actualizado, se descontó ${abs(cambio_saldo)} de saldo, nuevo saldo: {self.__saldo}")
             else: 
                 print("Operación no realizada: no hay saldo suficiente para ejecutar la transacción")
+
+    def set_total_compras(self): #cada vez suma 1
+        self._total_compras += 1
+
+    def set_total_gastado(self, compra_actual):
+        self._total_gastado += compra_actual
+    
+
+    def promedio_compras(self):
+        try:
+            promedio_compras = self._total_gastado / self._total_compras
+            print(f"Promedio de compras del cliente {self.id_cliente} : {promedio_compras}")
+            return(promedio_compras)
+        except ZeroDivisionError:
+            print(f"El cliente {self.id_cliente} aún no tiene compras, y no se puede dividir por cero")
+
+
 #============================FIN CLASE CLIENTE==================================
 
 class Vendedor:
@@ -222,6 +264,14 @@ class Compra:
         self.cliente = cliente
         self.producto = ordencompra.producto #SKU
         self.sucursal = sucursal
+        self.vendedor = vendedor
+        self.cantidad = cantidad
+        try:
+            if self.cantidad > 10:
+                raise NoSeraMuchoException("No se pueden comprar más de 10 unidades")
+        except NoSeraMuchoException:
+            print(f"No se puede comprar más de 10 unidades, usted intentó comprar {cantidad}")
+        self.con_despacho = con_despacho
         
         self.cantidad = cantidad
         self.con_despacho = ordencompra.despacho
@@ -243,8 +293,8 @@ class Compra:
             print(f"Despacho: ${self.cantidad * 5000}")
             print(f"Valor final a pagar:   {self.cantidad}*${self.producto.valor_total} = ${gasto}")
 
-####################cambiar referencia a la de stock dentro de sucursal.... agregar agumento de sucursal y bodega asociada?
-        ##desde este punto en adelante los cálculos de gasto y comisiones son en base a "gasto" que refleja el monto total a pagar.
+        #cambiar referencia a la de stock dentro de sucursal.... agregar agumento de sucursal y bodega asociada?
+        #desde este punto en adelante los cálculos de gasto y comisiones son en base a "gasto" que refleja el monto total a pagar.
         if (self.sucursal.stock(self.producto.sku)>=self.cantidad and self.cliente.saldo()>=gasto)==True:
             
             print("===Saldo y stock antes de transacción==")
@@ -260,6 +310,12 @@ class Compra:
             self.vendedor.set_comision_acumulativa(gasto * self.vendedor.porcentaje_comision()/100) 
             #porcentaje comision te devuelve un numero entero representando su cut y multiplicamos por el 
             #valor total para sacar la comision que se va al trabajador, que en los ejemplos es del 5%
+
+            #se actualiza total_compra y total_gastado en la respectiva instancia del cliente:
+            self.cliente.set_total_compras()
+            self.cliente.set_total_gastado(gasto)
+
+
             #prints para testear cambios internos
             print("Post transacción:")
             print(f"saldo de cliente es {self.cliente.saldo()}")
@@ -300,6 +356,6 @@ vendedor5 = Vendedor("12345622-5", "María", "González", "Menaje", 5, 54)
 #correctamente los métodos de las clases en las opciones del menú desarrollado.
 cliente1 = Cliente("id1", "Ignacio", "Fuentealba", "correo@gmail.com", "25-enero", 25000000)
 cliente2 = Cliente("id2", "Juan", "Perez", "pepo@hotmail.com", "15-enero", 0)
-cliente3 = Cliente("id3", "Pedro", "Gomez", "XXXXXXXXXXXXXXX", "20-enero", 0)
+cliente3 = Cliente("id3", "Pedro", "Gomez", "XXXXXXXXXXXXXXX", "20-enero", 100000)
 cliente4 = Cliente("id4", "Maria", "Lopez", "XXXXXXXXXXXXXXX", "20-marzo", 0)
 cliente5 = Cliente("id5", "Luis", "Gonzalez", "XXXXXXXXXXXXXXX", "20-febrero", 0)
