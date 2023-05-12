@@ -1,17 +1,12 @@
 import time
+from excepciones import NoSeraMuchoException
+
 
 #Se solicita que los atributos __saldo (Cliente), __Impuesto (Producto) y __Comision (Bodeguero) se
 #encuentren encapsulados. (hecho ok)
 productos = []
 clientes = []
 
-#=======Excepciones personalizadas==========
-
-class NoSeraMuchoException(Exception):
-    "Cuando se supera un máximo de unidades"
-    pass
-
-#===========fin excepciones==============
 
 class Cliente:
     def __init__(self, id_cliente, nombre, apellido, correo, fecha_Registro, saldo, edad = None):
