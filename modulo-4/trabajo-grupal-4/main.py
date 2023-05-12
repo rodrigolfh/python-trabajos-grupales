@@ -1,3 +1,5 @@
+import time
+
 #Se solicita que los atributos __saldo (Cliente), __Impuesto (Producto) y __Comision (Bodeguero) se
 #encuentren encapsulados. (hecho ok)
 productos = []
@@ -112,10 +114,9 @@ class Empresa:
             print(f"SKU: {key}, STOCK: {value} unidades")
 
     def define_stock(self, sku, nuevo_stock):
-        try:
-            self.stocks[sku] = nuevo_stock
-        except TypeError:
-            print("Debe ingresar todos los argumentos")
+        
+        self.stocks[sku] = nuevo_stock
+
     def stock(self, sku, modificación_stock = None): #obtiene la cantidad de unidades de un sku dado, o redefine si se le entrega además una cantidad
         #mantiene funcionalidad del método stock que tenía la clase Producto
         
