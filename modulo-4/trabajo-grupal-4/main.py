@@ -273,12 +273,12 @@ cliente3 = Cliente("id3", "Pedro", "Gomez", "XXXXXXXXXXXXXXX", "20-enero", 0)
 cliente4 = Cliente("id4", "Maria", "Lopez", "XXXXXXXXXXXXXXX", "20-marzo", 0)
 cliente5 = Cliente("id5", "Luis", "Gonzalez", "XXXXXXXXXXXXXXX", "20-febrero", 0)
 
-#probar método vender
-compra1 = Compra(cliente2, producto1, sucursal_mall_plaza, vendedor3, 10, True)
-vendedor3.vender(compra1)
+#probar método vender, se trasladó a tests
+#compra1 = Compra(cliente2, producto1, sucursal_mall_plaza, vendedor3, 10, True)
+#vendedor3.vender(compra1)
 
-compra2 = Compra(cliente1, producto3, sucursal_mall_plaza, vendedor1, 10, False)
-vendedor1.vender(compra2)
+#compra2 = Compra(cliente1, producto3, sucursal_mall_plaza, vendedor1, 10, False)
+#vendedor1.vender(compra2)
 
 
 def menu_principal():
