@@ -5,6 +5,14 @@ import time
 productos = []
 clientes = []
 
+#=======Excepciones personalizadas==========
+
+class NoSeraMuchoException(Exception):
+    "Cuando se supera un máximo de unidades"
+    pass
+
+#===========fin excepciones==============
+
 class Cliente:
     def __init__(self, id_cliente, nombre, apellido, correo, fecha_Registro, saldo, edad = None):
 
@@ -15,8 +23,15 @@ class Cliente:
         self.correo = correo
         self.fecha_registro = fecha_Registro
         self.__saldo = saldo #la encapsulacion la hago asi, con __ antes de la definicion del atributo de clase
-        self.edad = edad
-    
+        try:
+            self.edad = int(edad)
+        except ValueError:
+            print("ValueError: EDAD debe ser un entero")
+        except TypeError:
+            print("TypeError: EDAD debe ser un entero")
+        self._total_compras = 0
+        self._total_gastado = 0
+            
     def saldo(self, *cambio):
         if len(cambio) == 0:
             return self.__saldo
@@ -28,6 +43,23 @@ class Cliente:
                 #if cambio_saldo<0: print(f"Saldo de {self.nombre} {self.apellido} actualizado, se descontó ${abs(cambio_saldo)} de saldo, nuevo saldo: {self.__saldo}")
             else: 
                 print("Operación no realizada: no hay saldo suficiente para ejecutar la transacción")
+
+    def set_total_compras(self): #cada vez suma 1
+        self._total_compras += 1
+
+    def set_total_gastado(self, compra_actual):
+        self._total_gastado += compra_actual
+    
+
+    def promedio_compras(self):
+        try:
+            promedio_compras = self._total_gastado / self._total_compras
+            print(f"Promedio de compras del cliente {self.id_cliente} : {promedio_compras}")
+            return(promedio_compras)
+        except ZeroDivisionError:
+            print(f"El cliente {self.id_cliente} aún no tiene compras, y no se puede dividir por cero")
+
+
 #============================FIN CLASE CLIENTE==================================
 
 class Vendedor:
@@ -197,6 +229,11 @@ class Compra:
         self.sucursal = sucursal
         self.vendedor = vendedor
         self.cantidad = cantidad
+        try:
+            if self.cantidad > 10:
+                raise NoSeraMuchoException("No se pueden comprar más de 10 unidades")
+        except NoSeraMuchoException:
+            print(f"No se puede comprar más de 10 unidades, usted intentó comprar {cantidad}")
         self.con_despacho = con_despacho
         
     def procesar_compra(self):
@@ -224,6 +261,12 @@ class Compra:
             self.vendedor.set_comision_acumulativa(gasto * self.vendedor.porcentaje_comision()/100) 
             #porcentaje comision te devuelve un numero entero representando su cut y multiplicamos por el 
             #valor total para sacar la comision que se va al trabajador, que en los ejemplos es del 5%
+
+            #se actualiza total_compra y total_gastado en la respectiva instancia del cliente:
+            self.cliente.set_total_compras()
+            self.cliente.set_total_gastado(gasto)
+
+
             #prints para testear cambios internos
             print("Post transacción:")
             print(f"saldo de cliente es {self.cliente.saldo()}")
@@ -269,7 +312,7 @@ vendedor5 = Vendedor("12345622-5", "María", "González", "Menaje", 5, 54)
 #correctamente los métodos de las clases en las opciones del menú desarrollado.
 cliente1 = Cliente("id1", "Ignacio", "Fuentealba", "correo@gmail.com", "25-enero", 25000000)
 cliente2 = Cliente("id2", "Juan", "Perez", "pepo@hotmail.com", "15-enero", 0)
-cliente3 = Cliente("id3", "Pedro", "Gomez", "XXXXXXXXXXXXXXX", "20-enero", 0)
+cliente3 = Cliente("id3", "Pedro", "Gomez", "XXXXXXXXXXXXXXX", "20-enero", 100000)
 cliente4 = Cliente("id4", "Maria", "Lopez", "XXXXXXXXXXXXXXX", "20-marzo", 0)
 cliente5 = Cliente("id5", "Luis", "Gonzalez", "XXXXXXXXXXXXXXX", "20-febrero", 0)
 
@@ -279,138 +322,3 @@ cliente5 = Cliente("id5", "Luis", "Gonzalez", "XXXXXXXXXXXXXXX", "20-febrero", 0
 
 #compra2 = Compra(cliente1, producto3, sucursal_mall_plaza, vendedor1, 10, False)
 #vendedor1.vender(compra2)
-
-
-def menu_principal():
-    print("--------Bienvenido a Telovendo SPA--------")
-    print("Menú Clientes = 1")
-    print("Menú Ventas = 2")
-    print("Menú Productos = 3")
-
-    opcion = int(input("Ingrese el número de la opción deseada: \n"))
-
-    
-    switcher = {
-        1: menu_clientes,
-        2: menu_ventas,
-        3: menu_productos
-    }
-    funcion = switcher.get(opcion)
-    if funcion:
-        funcion()
-    else:
-        print("Opción no válida") 
-    
-def menu_clientes():
-    print("")
-    print("--------Menú Cliente-------")
-    print("Agregar un Cliente = 1")
-    print("Modificar un Cliente = 2")
-    print("Eliminar un Cliente = 3")
-    print("Consultar TeloPuntos = 4")
-    print("Recargar TeloPuntos = 5")
-    print("Volver = 6")
-    
-    opcion = int(input("Ingrese el número de la opción deseada: \n"))
-
-    switcher = {
-        1: agregar_cliente,
-        2: modificar_cliente,
-        3: eliminar_cliente,
-        4: consultar_telopuntos,
-        5: recargar_telopuntos,
-        6: menu_principal
-    }    
-    funcion = switcher.get(opcion)
-    if funcion:
-        funcion()
-    else:
-        print("Opción no válida")
-
-def agregar_cliente():
-    pass
-def modificar_cliente():
-    pass
-def eliminar_cliente():
-    pass
-def consultar_telopuntos():
-    pass
-def recargar_telopuntos():
-    pass
-
-def menu_ventas():
-    print("")
-    print("--------Menú Venta-------")
-    print("Agregar al Carrito = 1")
-    print("Eliminar del Carrito = 2")
-    print("Ver Carrito = 3")
-    print("Consultar Telopuntos = 4")
-    print("Pagar usando TeloPuntos = 5")
-    print("Pagar con Efectivo/Tarjeta = 6") #Pronto!
-    print("Volver = 7")
-    
-    cliente = input("Ingrese número único del cliente a atender : ") #para no preguntarlo a cada rato
-    opcion = int(input("Ingrese el número de la opción deseada: \n"))
-
-    switcher = {
-        1: agregar_item_carrito,
-        2: eliminar_item_carrito,
-        3: ver_carrito,
-        4: consultar_telopuntos,
-        5: pago_con_telopuntos, 
-        6: pago_normal, #Pronto!
-        7: menu_principal        
-    }    
-    funcion = switcher.get(opcion)
-    if funcion:
-        funcion()
-    else:
-        print("Opción no válida")
-
-carrito = []
-def agregar_item_carrito(item):
-    item = input("Ingrese Número de Producto (sku): ")
-def eliminar_item_carrito():
-    pass
-def ver_carrito():
-    pass
-def pago_con_telopuntos():
-    pass
-def pago_normal():
-    pass
-
-def menu_productos():
-    print("")
-    print("--------Menú Productos-------")
-    print("Agregar un Producto = 1")
-    print("Modificar un Producto = 2")
-    print("Eliminar un Producto = 3")
-    print("Consultar Stock = 4")
-    print("Volver = 5")
-   
-    opcion = int(input("Ingrese el número de la opción deseada: \n"))
-
-    switcher = {
-        1: agregar_producto,
-        2: modificar_producto,
-        3: eliminar_producto,
-        4: consultar_stock,
-        5: menu_principal
-    }    
-    funcion = switcher.get(opcion)
-    if funcion:
-        funcion()
-    else:
-        print("Opción no válida")
-
-def agregar_producto():
-    pass
-def modificar_producto():
-    pass
-def eliminar_producto():
-    pass
-def consultar_stock():
-    pass
-def menu_principal():
-    pass
-
