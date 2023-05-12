@@ -19,10 +19,13 @@ print("==================================================")
 print("=========================pruebas de transacciones=========================")
 #compra1 = Compra(cliente1, producto1, sucursal_mall_plaza, vendedor1, 1001)#para probar desbordado de stock
 #compra1 = Compra(cliente1, producto1, sucursal_mall_plaza, vendedor1, 4)
-compra1 = Compra(cliente2, producto1, sucursal_mall_plaza, vendedor3, 10, True)
+ocv20231 = OrdenCompra(producto1, True)
+ocv20232 = OrdenCompra(producto2, False)
+
+compra1 = Compra(cliente2, ocv20231, sucursal_mall_plaza, vendedor3, 10)
 vendedor3.vender(compra1)
 
-compra2 = Compra(cliente1, producto3, sucursal_mall_plaza, vendedor1, 10, False)
+compra2 = Compra(cliente1, ocv20232, sucursal_mall_plaza, vendedor1, 10)
 vendedor1.vender(compra2)
 compra1.procesar_compra()
 compra2.procesar_compra()

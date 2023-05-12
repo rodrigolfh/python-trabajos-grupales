@@ -67,7 +67,28 @@ class Vendedor:
         
    
 #============================FIN CLASE VENDEDOR==================================
-
+correlativos_OC = []
+class OrdenCompra:
+    """
+    Se deberá implementar una clase OrdenCompra con los siguientes atributos:
+    a. Id_ordencompra
+    b. producto
+    c. despacho
+    El atributo producto, deberá ser una composición de la clase Producto y el atributo despacho, solo
+    almacenará valores booleanos. En el caso de que el despacho sea True ( Verdadero ), se deberá agregar al
+    valor del producto 5.000 CLP por recargo de despacho y mostrar por consola el total final con el detalle (
+    valor neto, impuesto, despacho, valor total ) el valor final del producto, cuando se utilice la función vender
+    de la clase Vendedor.
+    """
+    def __init__(self, producto, despacho):
+        #Producto ha de ser un objeto producto. Despacho ha de ser bool.
+        #id será un correlativo.
+            if len(correlativos_OC) == 0: self.Id_ordencompra = 1
+            else: 
+                self.Id_ordencompra = correlativos_OC[-1]+1
+            if type(producto) is Producto: self.producto = producto
+            if type(despacho) is bool: self.despacho = despacho
+        
 class Producto:
     
     def __init__(self, sku, nombre, categoria, proveedor, valor_neto, color = None):
@@ -191,14 +212,16 @@ class Sucursal(Empresa):
 
         ##se agrega la clase compra
 class Compra:
-    def __init__(self, cliente, producto, sucursal, vendedor, cantidad, con_despacho):
+    def __init__(self, cliente, ordencompra, sucursal, vendedor, cantidad):
         self.cliente = cliente
-        self.producto = producto #SKU
+        self.producto = ordencompra.producto #SKU
         self.sucursal = sucursal
         self.vendedor = vendedor
         self.cantidad = cantidad
-        self.con_despacho = con_despacho
-        
+        self.con_despacho = ordencompra.despacho
+    #logica:
+    #hice los minimos cambios posibles para que vendedor pueda ejecutar la venta mediante los recursos que le pase OrdenCompra en vez de acceder a los productos directamente.
+    #a futuro presumo que la logica podría ser que la orden de compra incluya la sucursal de origen para determinar de donde descontar el stock y tal.
     def procesar_compra(self):
         gasto = self.cantidad*self.producto.valor_total #el gasto del cliente debe incluir el impuesto
         
