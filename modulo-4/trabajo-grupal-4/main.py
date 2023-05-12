@@ -56,15 +56,21 @@ class Vendedor:
             print("Vendedor no existe, intente con otro RUT.")
             
     def vender(self, compra):
-        if compra.con_despacho == True:
-            total_compra = compra.producto.valor_total * compra.cantidad 
-            total_compra*= 1.1  # Aplicar un recargo del 10%
-            print(f"Se aplicó un recargo por despacho. Nuevo valor de compra: ${round(total_compra)}")
-            self.total_final_compra = total_compra
-        else:
-            total_compra = compra.producto.valor_total * compra.cantidad 
-            print("No se aplicó recargo por despacho.")
+        compra.procesar_compra(self)
         
+""" 
+class Compra:
+    def __init__(self, cliente, ordencompra, sucursal, vendedor, cantidad):
+        self.cliente = cliente
+        self.producto = ordencompra.producto #SKU
+        self.sucursal = sucursal
+        self.vendedor = vendedor
+        self.cantidad = cantidad
+        self.con_despacho = ordencompra.despacho
+    #logica:
+    #hice los minimos cambios posibles para que vendedor pueda ejecutar la venta mediante los recursos que le pase OrdenCompra en vez de acceder a los productos directamente.
+    #a futuro presumo que la logica podría ser que la orden de compra incluya la sucursal de origen para determinar de donde descontar el stock y tal.
+    def procesar_compra(self): """
    
 #============================FIN CLASE VENDEDOR==================================
 correlativos_OC = []
@@ -212,29 +218,36 @@ class Sucursal(Empresa):
 
         ##se agrega la clase compra
 class Compra:
-    def __init__(self, cliente, ordencompra, sucursal, vendedor, cantidad):
+    def __init__(self, cliente, ordencompra, sucursal, cantidad):
         self.cliente = cliente
         self.producto = ordencompra.producto #SKU
         self.sucursal = sucursal
-        self.vendedor = vendedor
+        
         self.cantidad = cantidad
         self.con_despacho = ordencompra.despacho
     #logica:
     #hice los minimos cambios posibles para que vendedor pueda ejecutar la venta mediante los recursos que le pase OrdenCompra en vez de acceder a los productos directamente.
     #a futuro presumo que la logica podría ser que la orden de compra incluya la sucursal de origen para determinar de donde descontar el stock y tal.
-    def procesar_compra(self):
+    def procesar_compra(self, vendedor):
+        self.vendedor = vendedor
+        print(f"Venta inicializada por {self.vendedor.nombre}:")
         gasto = self.cantidad*self.producto.valor_total #el gasto del cliente debe incluir el impuesto
-        
-        print("Detalle de la transacción:")
-        print(f"Valor bruto:  {self.cantidad}*${self.producto.valor_neto} = {self.cantidad*self.producto.valor_neto}")
-        print(f"Valor neto:   {self.cantidad}*${self.producto.valor_total} = ${gasto}")
+        print("Detalle de la transacción a realizar:")
+        print(f"Valor bruto: {self.cantidad}*${self.producto.valor_neto} = {self.cantidad*self.producto.valor_neto}")
+        impuestos = int(round(self.producto.valor_neto * (self.producto.impuesto/100)))*self.cantidad #calculo el impuesto de la compra
+        print(f"Impuestos: ({self.producto.impuesto}%) ${impuestos}")
+        print(f"Valor neto: {self.cantidad}*${self.producto.valor_total} = ${gasto}")
+        if self.con_despacho: 
+            self.producto.valor_total+=5000 #aumento el valor total del producto por el costo del despacho, individualmente, textual según lo del ejercicio.
+            gasto = self.cantidad*self.producto.valor_total #actualizo el gasto para reflejar el costo del despacho
+            print(f"Despacho: ${self.cantidad * 5000}")
+            print(f"Valor final a pagar:   {self.cantidad}*${self.producto.valor_total} = ${gasto}")
 
 ####################cambiar referencia a la de stock dentro de sucursal.... agregar agumento de sucursal y bodega asociada?
-
-
+        ##desde este punto en adelante los cálculos de gasto y comisiones son en base a "gasto" que refleja el monto total a pagar.
         if (self.sucursal.stock(self.producto.sku)>=self.cantidad and self.cliente.saldo()>=gasto)==True:
             
-            print("N°s originales")
+            print("===Saldo y stock antes de transacción==")
             print(f"saldo de cliente es {self.cliente.saldo()}")
             print(f"stock de producto es {self.sucursal.stock(self.producto.sku)}")
             print(f"comision acumulativa de vendedor es {self.vendedor.get_comision_acumulativa()}")
@@ -251,15 +264,12 @@ class Compra:
             print("Post transacción:")
             print(f"saldo de cliente es {self.cliente.saldo()}")
             print(f"stock de producto es {self.sucursal.stock(self.producto.sku)}")
-            print(f"comision de vendedor es {self.vendedor.get_comision_acumulativa()}")
+            print(f"comision de vendedor {self.vendedor.nombre} es {self.vendedor.get_comision_acumulativa()}")
             print("Compra realizada con éxito.")
-            #return nuevo_saldo
         elif(self.sucursal.stock(self.producto.sku)<self.cantidad):
             print("No hay suficientes unidades para concretar la transacción")
         elif(self.cliente.saldo()<gasto):
             print("No tiene saldo suficiente para concretar la transacción")
-            
-
              
 #===================================FIN CLASE COMPRA=====================================
 #===================================INSTANCIACIONES DE EJEMPLO=====================================
@@ -279,8 +289,6 @@ telovendo = Empresa("Te Lo Vendo", "1234567-9", "La Punta del Cerro s/n")
 bodega_principal = Bodega("001", "Calle 1 sin número", {"12345677-1": True, "12345688-2": True, "12345655-4": True}, {"001": 10000,"002": 10000,"003": 10000,"004": 10000,"005": 10000})
 sucursal_mall_plaza = Sucursal("001", "Calle 2 sin número", {"12345677-1": True, "12345688-2": True, "12345655-4": True}, {"001": 1000,"002": 1000,"003": 1000,"004": 1000,"005": 1000})
 
-    
-
 vendedor1 = Vendedor("12345677-1", "Hugo", "Araya", "Zapatería",  5, 50)
 vendedor2 = Vendedor("12345688-2", "Paco", "Iriarte", "Deportes", 5, 51)
 vendedor3 = Vendedor("12345699-3", "Luis", "Gómez", "Juguetería", 5, 52)
@@ -295,145 +303,3 @@ cliente2 = Cliente("id2", "Juan", "Perez", "pepo@hotmail.com", "15-enero", 0)
 cliente3 = Cliente("id3", "Pedro", "Gomez", "XXXXXXXXXXXXXXX", "20-enero", 0)
 cliente4 = Cliente("id4", "Maria", "Lopez", "XXXXXXXXXXXXXXX", "20-marzo", 0)
 cliente5 = Cliente("id5", "Luis", "Gonzalez", "XXXXXXXXXXXXXXX", "20-febrero", 0)
-
-#probar método vender, se trasladó a tests
-#compra1 = Compra(cliente2, producto1, sucursal_mall_plaza, vendedor3, 10, True)
-#vendedor3.vender(compra1)
-
-#compra2 = Compra(cliente1, producto3, sucursal_mall_plaza, vendedor1, 10, False)
-#vendedor1.vender(compra2)
-
-
-def menu_principal():
-    print("--------Bienvenido a Telovendo SPA--------")
-    print("Menú Clientes = 1")
-    print("Menú Ventas = 2")
-    print("Menú Productos = 3")
-
-    opcion = int(input("Ingrese el número de la opción deseada: \n"))
-
-    
-    switcher = {
-        1: menu_clientes,
-        2: menu_ventas,
-        3: menu_productos
-    }
-    funcion = switcher.get(opcion)
-    if funcion:
-        funcion()
-    else:
-        print("Opción no válida") 
-    
-def menu_clientes():
-    print("")
-    print("--------Menú Cliente-------")
-    print("Agregar un Cliente = 1")
-    print("Modificar un Cliente = 2")
-    print("Eliminar un Cliente = 3")
-    print("Consultar TeloPuntos = 4")
-    print("Recargar TeloPuntos = 5")
-    print("Volver = 6")
-    
-    opcion = int(input("Ingrese el número de la opción deseada: \n"))
-
-    switcher = {
-        1: agregar_cliente,
-        2: modificar_cliente,
-        3: eliminar_cliente,
-        4: consultar_telopuntos,
-        5: recargar_telopuntos,
-        6: menu_principal
-    }    
-    funcion = switcher.get(opcion)
-    if funcion:
-        funcion()
-    else:
-        print("Opción no válida")
-
-def agregar_cliente():
-    pass
-def modificar_cliente():
-    pass
-def eliminar_cliente():
-    pass
-def consultar_telopuntos():
-    pass
-def recargar_telopuntos():
-    pass
-
-def menu_ventas():
-    print("")
-    print("--------Menú Venta-------")
-    print("Agregar al Carrito = 1")
-    print("Eliminar del Carrito = 2")
-    print("Ver Carrito = 3")
-    print("Consultar Telopuntos = 4")
-    print("Pagar usando TeloPuntos = 5")
-    print("Pagar con Efectivo/Tarjeta = 6") #Pronto!
-    print("Volver = 7")
-    
-    cliente = input("Ingrese número único del cliente a atender : ") #para no preguntarlo a cada rato
-    opcion = int(input("Ingrese el número de la opción deseada: \n"))
-
-    switcher = {
-        1: agregar_item_carrito,
-        2: eliminar_item_carrito,
-        3: ver_carrito,
-        4: consultar_telopuntos,
-        5: pago_con_telopuntos, 
-        6: pago_normal, #Pronto!
-        7: menu_principal        
-    }    
-    funcion = switcher.get(opcion)
-    if funcion:
-        funcion()
-    else:
-        print("Opción no válida")
-
-carrito = []
-def agregar_item_carrito(item):
-    item = input("Ingrese Número de Producto (sku): ")
-def eliminar_item_carrito():
-    pass
-def ver_carrito():
-    pass
-def pago_con_telopuntos():
-    pass
-def pago_normal():
-    pass
-
-def menu_productos():
-    print("")
-    print("--------Menú Productos-------")
-    print("Agregar un Producto = 1")
-    print("Modificar un Producto = 2")
-    print("Eliminar un Producto = 3")
-    print("Consultar Stock = 4")
-    print("Volver = 5")
-   
-    opcion = int(input("Ingrese el número de la opción deseada: \n"))
-
-    switcher = {
-        1: agregar_producto,
-        2: modificar_producto,
-        3: eliminar_producto,
-        4: consultar_stock,
-        5: menu_principal
-    }    
-    funcion = switcher.get(opcion)
-    if funcion:
-        funcion()
-    else:
-        print("Opción no válida")
-
-def agregar_producto():
-    pass
-def modificar_producto():
-    pass
-def eliminar_producto():
-    pass
-def consultar_stock():
-    pass
-def menu_principal():
-    pass
-

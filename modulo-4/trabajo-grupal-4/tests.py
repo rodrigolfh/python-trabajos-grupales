@@ -22,16 +22,14 @@ print("=========================pruebas de transacciones========================
 ocv20231 = OrdenCompra(producto1, True)
 ocv20232 = OrdenCompra(producto2, False)
 
-compra1 = Compra(cliente2, ocv20231, sucursal_mall_plaza, vendedor3, 10)
-vendedor3.vender(compra1)
-
-compra2 = Compra(cliente1, ocv20232, sucursal_mall_plaza, vendedor1, 10)
-vendedor1.vender(compra2)
-compra1.procesar_compra()
-compra2.procesar_compra()
-print(vendedor1.porcentaje_comision())
-vendedor1.porcentaje_comision("12345677-1", 50)
-
+compra1 = Compra(cliente1, ocv20231, sucursal_mall_plaza, 10)
+#vendedor3.vender(compra1)
+compra2 = Compra(cliente1, ocv20232, sucursal_mall_plaza, 10)
+vendedor1.vender(compra1)
+#compra1.procesar_compra()
+#compra2.procesar_compra()
+#vendedor1.porcentaje_comision("12345677-1", 50)
+print("==================================================")
 print("pruebas nuevas clases Sucursal y Bodega")
 print("sucursal", sucursal_mall_plaza.stocks)
 sucursal_mall_plaza.stock("001", 49) #agrega stock
