@@ -1,4 +1,4 @@
-import time
+import time, os, json
 
 #Se solicita que los atributos __saldo (Cliente), __Impuesto (Producto) y __Comision (Bodeguero) se
 #encuentren encapsulados. (hecho ok)
@@ -39,7 +39,10 @@ class Vendedor:
         self.__comision_acumulativa = __comision
         self.edad = edad
         self.__porcentaje_comision = porcentaje_comision
-    
+        ruta = "c:/temp/{}{}.json".format(self.nombre, self.apellido) #crea una ruta de archivo con el nombre del vendedor
+        self.registroventas = ruta
+
+        
     def set_comision_acumulativa(self, comision):
         self.__comision_acumulativa += comision
 
@@ -57,21 +60,6 @@ class Vendedor:
             
     def vender(self, compra):
         compra.procesar_compra(self)
-        
-""" 
-class Compra:
-    def __init__(self, cliente, ordencompra, sucursal, vendedor, cantidad):
-        self.cliente = cliente
-        self.producto = ordencompra.producto #SKU
-        self.sucursal = sucursal
-        self.vendedor = vendedor
-        self.cantidad = cantidad
-        self.con_despacho = ordencompra.despacho
-    #logica:
-    #hice los minimos cambios posibles para que vendedor pueda ejecutar la venta mediante los recursos que le pase OrdenCompra en vez de acceder a los productos directamente.
-    #a futuro presumo que la logica podría ser que la orden de compra incluya la sucursal de origen para determinar de donde descontar el stock y tal.
-    def procesar_compra(self): """
-   
 #============================FIN CLASE VENDEDOR==================================
 correlativos_OC = []
 class OrdenCompra:
@@ -222,7 +210,7 @@ class Compra:
         self.cliente = cliente
         self.producto = ordencompra.producto #SKU
         self.sucursal = sucursal
-        
+        self.ordencompra = ordencompra
         self.cantidad = cantidad
         self.con_despacho = ordencompra.despacho
     #logica:
@@ -257,6 +245,7 @@ class Compra:
             self.cliente.saldo(-gasto) 
             self.sucursal.stock(self.producto.sku, -self.cantidad)
             print(f"comision es de {self.vendedor.porcentaje_comision()}%")
+            comision_generada = gasto * self.vendedor.porcentaje_comision()/100
             self.vendedor.set_comision_acumulativa(gasto * self.vendedor.porcentaje_comision()/100) 
             #porcentaje comision te devuelve un numero entero representando su cut y multiplicamos por el 
             #valor total para sacar la comision que se va al trabajador, que en los ejemplos es del 5%
@@ -266,11 +255,75 @@ class Compra:
             print(f"stock de producto es {self.sucursal.stock(self.producto.sku)}")
             print(f"comision de vendedor {self.vendedor.nombre} es {self.vendedor.get_comision_acumulativa()}")
             print("Compra realizada con éxito.")
+
+            #=========================REGISTRO DE VENTAS===========================
+            #con esta indentacion queda dentro del if, o sea solo aplicará para compras exitosas
+
+            """
+            Así mismo se solicita contar con un registro de las ventas (en un archivo externo) que ha realizado el
+            vendedor, para calcular la comisión que lleva actualmente. La comisión consiste en el 10% de cada
+            venta.
+            """
+
+            #make a json file named after variable self.registroventas = "poto"
+            #if it's not already created, make it.
+            #if it's created, open it and append the new data.
+            #keys are  ['Nombre del vendedor', 'Orden de compra', 'Total', 'Cliente', 'Comisión']
+            #values come from [" ".join({self.vendedor.nombre} {self.vendedor.apellido})", self.ordencompra.Id_ordencompra, gasto, self.cliente.nombre, comision_generada]
+
+            """ if os.path.isfile(self.vendedor.registroventas) and os.path.getsize(self.vendedor.registroventas) > 0: #con esto se corrobora que existe y que no está vacío
+                with open(self.vendedor.registroventas, "r+", encoding='utf-8') as fichero:
+                    contenido = json.load(fichero) 
+                    contenido.append([f"{self.vendedor.nombre} {self.vendedor.apellido}", self.ordencompra.Id_ordencompra, gasto, self.cliente.nombre, comision_generada])
+                    fichero.seek(0)
+                    json.dump(contenido, fichero, indent=4, sort_keys=True, ensure_ascii=False)
+            else:
+                with open(self.vendedor.registroventas, "w", encoding='utf-8') as fichero:
+                    #cabecera = ['Nombre del vendedor', 'Orden de compra', 'Total', 'Cliente', 'Comisión']
+                    contenido = [[f"{self.vendedor.nombre} {self.vendedor.apellido}", self.ordencompra.Id_ordencompra, gasto, self.cliente.nombre, comision_generada]]
+                    json.dump(contenido, fichero, indent=4, sort_keys=True, ensure_ascii=False)
+            fichero.close()
+ """
+            #Revisamos si existe el archivo.
+            #caso existe y/o está no está en peso 0:
+            if os.path.isfile(self.vendedor.registroventas) and os.path.getsize(self.vendedor.registroventas) > 0: #con esto se corrobora que existe y que no está vacío
+                #el chequeo de getsize es relevante porque puede sino fallar al intentar llenar un archivo que existe pero está vacío (onda, vaciado manualmente)
+                print("archivo existe")
+
+                with open(self.vendedor.registroventas, 'r', encoding='utf-8') as f: #primero lo abro solo para cargar el contenido original en modo de lectura
+                    #es extremadamente importante incluir el enconding en el read también o puedes provocar memes de ZALGO en el json, que empeoran con cada lectura 
+                    contenido = json.load(f)
+                nuevo_item = {
+                                'Nombre del vendedor': f"{' '.join([self.vendedor.nombre, self.vendedor.apellido])}",
+                                'ID_ordencompra': self.ordencompra.Id_ordencompra, 
+                                'Monto de compra':gasto, 
+                                'Cliente':self.cliente.nombre, 
+                                'Comisión generada':comision_generada}
+                contenido.append(nuevo_item)
+
+                with open(self.vendedor.registroventas, 'w', encoding='utf-8') as f:
+                    json.dump(contenido, f, indent=4, ensure_ascii=False)
+            else:
+                print("archivo no existe, creando..")
+                #"w" para modo "wrande"
+                with open(self.vendedor.registroventas, "w", encoding='utf-8') as fichero:
+                    #cabecera = ['Nombre del vendedor', 'Orden de compra', 'Total', 'Cliente', 'Comisión']
+                    contenedor = []
+                    contenido = {
+                                'Nombre del vendedor': f"{' '.join([self.vendedor.nombre, self.vendedor.apellido])}",
+                                'ID_ordencompra': self.ordencompra.Id_ordencompra, 
+                                'Monto de compra':gasto, 
+                                'Cliente':self.cliente.nombre, 
+                                'Comisión generada':comision_generada}
+                    contenedor.append(contenido)
+                    json.dump(contenedor, fichero, indent=4, ensure_ascii=False)
+                fichero.close()
+        #============================================FALLO DE TRANSACCION===================================
         elif(self.sucursal.stock(self.producto.sku)<self.cantidad):
             print("No hay suficientes unidades para concretar la transacción")
         elif(self.cliente.saldo()<gasto):
             print("No tiene saldo suficiente para concretar la transacción")
-             
+                
 #===================================FIN CLASE COMPRA=====================================
 #===================================INSTANCIACIONES DE EJEMPLO=====================================
 proveedor1 = Proveedor("111111111", "Proveedor1", "Falabella", "Mexico", "Persona Juridica")

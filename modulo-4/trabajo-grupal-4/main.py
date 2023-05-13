@@ -1,13 +1,7 @@
 import time
-<<<<<<< HEAD
-from email_validator import validate_email, EmailNotValidError
-=======
+
 from excepciones import NoSeraMuchoException
 
-
->>>>>>> testing-rodrigo
-#Se solicita que los atributos __saldo (Cliente), __Impuesto (Producto) y __Comision (Bodeguero) se
-#encuentren encapsulados. (hecho ok)
 productos = []
 clientes = []
 
@@ -22,22 +16,9 @@ class Cliente:
         self.correo = correo
         self.fecha_registro = fecha_Registro
         self.__saldo = saldo #la encapsulacion la hago asi, con __ antes de la definicion del atributo de clase
-<<<<<<< HEAD
+
         self.edad = edad
 
-    def check(email):
-    try:
-      # validate and get info
-        v = validate_email(email)
-        # replace with normalized form
-        email = v["email"] 
-        print("True")
-    except EmailNotValidError as e:
-        # email is not valid, exception message is human-readable
-        print(str(e))
-
-    
-=======
         try:
             self.edad = int(edad)
         except ValueError:
@@ -47,7 +28,7 @@ class Cliente:
         self._total_compras = 0
         self._total_gastado = 0
             
->>>>>>> testing-rodrigo
+
     def saldo(self, *cambio):
         if len(cambio) == 0:
             return self.__saldo
@@ -270,18 +251,15 @@ class Compra:
         self.cliente = cliente
         self.producto = ordencompra.producto #SKU
         self.sucursal = sucursal
-<<<<<<< HEAD
-        self.vendedor = vendedor
+
+        
         self.cantidad = cantidad
         try:
             if self.cantidad > 10:
                 raise NoSeraMuchoException("No se pueden comprar más de 10 unidades")
         except NoSeraMuchoException:
             print(f"No se puede comprar más de 10 unidades, usted intentó comprar {cantidad}")
-        self.con_despacho = con_despacho
-=======
->>>>>>> 44fd2eefc14bc3e645544bb4832c8c8d45546f69
-        
+     
         self.cantidad = cantidad
         self.con_despacho = ordencompra.despacho
     #logica:
@@ -302,8 +280,8 @@ class Compra:
             print(f"Despacho: ${self.cantidad * 5000}")
             print(f"Valor final a pagar:   {self.cantidad}*${self.producto.valor_total} = ${gasto}")
 
-####################cambiar referencia a la de stock dentro de sucursal.... agregar agumento de sucursal y bodega asociada?
-        ##desde este punto en adelante los cálculos de gasto y comisiones son en base a "gasto" que refleja el monto total a pagar.
+        #cambiar referencia a la de stock dentro de sucursal.... agregar agumento de sucursal y bodega asociada?
+        #desde este punto en adelante los cálculos de gasto y comisiones son en base a "gasto" que refleja el monto total a pagar.
         if (self.sucursal.stock(self.producto.sku)>=self.cantidad and self.cliente.saldo()>=gasto)==True:
             
             print("===Saldo y stock antes de transacción==")
@@ -368,17 +346,3 @@ cliente2 = Cliente("id2", "Juan", "Perez", "pepo@hotmail.com", "15-enero", 0)
 cliente3 = Cliente("id3", "Pedro", "Gomez", "XXXXXXXXXXXXXXX", "20-enero", 100000)
 cliente4 = Cliente("id4", "Maria", "Lopez", "XXXXXXXXXXXXXXX", "20-marzo", 0)
 cliente5 = Cliente("id5", "Luis", "Gonzalez", "XXXXXXXXXXXXXXX", "20-febrero", 0)
-<<<<<<< HEAD
-
-<<<<<<< HEAD
-
-=======
-#probar método vender, se trasladó a tests
-#compra1 = Compra(cliente2, producto1, sucursal_mall_plaza, vendedor3, 10, True)
-#vendedor3.vender(compra1)
->>>>>>> testing-rodrigo
-
-#compra2 = Compra(cliente1, producto3, sucursal_mall_plaza, vendedor1, 10, False)
-#vendedor1.vender(compra2)
-=======
->>>>>>> 44fd2eefc14bc3e645544bb4832c8c8d45546f69
