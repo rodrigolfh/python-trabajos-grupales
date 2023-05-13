@@ -174,9 +174,8 @@ class Proveedor:
 
 class Empresa:
 
-    def __init__(self, nombre_empresa, rut, dirección):
-        self._nombre_empresa = nombre_empresa
-        self._rut = rut
+    def __init__(self, nombre, dirección):
+        self._id = nombre
         self.dirección = dirección
         #diccionarios vacíos, solo para poder crear métodos que serán heredados por las clases hijas
         
@@ -236,8 +235,7 @@ class Empresa:
 class Bodega(Empresa):
     """funcionarios es un dict con key ruts y value "activo" o "inactivo", stocks es un dict con key asociado a SKU y value la cantidad"""
     def __init__(self, nombre, dirección, colaboradores, stocks): 
-        self._id= nombre 
-        self._dirección = dirección
+        super().__init__(nombre, dirección)           
         self.colaboradores = list(colaboradores)
         self.stocks = stocks #se debe cambiar por llamado a función setter JSON
 
@@ -249,8 +247,7 @@ class Bodega(Empresa):
 ## clase sucursal
 class Sucursal(Empresa):
     def __init__(self, nombre, dirección, colaboradores, stocks): 
-        self._id = nombre
-        self._dirección = dirección
+        super().__init__(nombre, dirección)  
         self.colaboradores = list(colaboradores)
         self.stocks = stocks #se debe cambiar por llamado a función setter JSON
 
@@ -261,6 +258,7 @@ class Sucursal(Empresa):
         ##se agrega la clase compra
 class Compra:
     def __init__(self, cliente, ordencompra, sucursal, cantidad):
+        
         self.cliente = cliente
         self.producto = ordencompra.producto #SKU
         self.sucursal = sucursal
@@ -341,7 +339,7 @@ producto3 = Producto("003", "Producto 3", "Zapatería", proveedor3, 8990)
 producto4 = Producto("004", "Producto 4", "Deportes", proveedor4, 5990)
 producto5 = Producto("005", "Producto 5", "Electro", proveedor5, 29990)
 
-telovendo = Empresa("Te Lo Vendo", "1234567-9", "La Punta del Cerro s/n")
+telovendo = Empresa("Te Lo Vendo", "La Punta del Cerro s/n")
 bodega_principal = Bodega("001", "Calle 1 sin número", {"12345677-1": True, "12345688-2": True, "12345655-4": True}, {"001": 10000,"002": 10000,"003": 10000,"004": 10000,"005": 10000})
 sucursal_mall_plaza = Sucursal("001", "Calle 2 sin número", {"12345677-1": True, "12345688-2": True, "12345655-4": True}, {"001": 1000,"002": 1000,"003": 1000,"004": 1000,"005": 1000})
 
