@@ -1,0 +1,16 @@
+[
+    {
+        "Cliente": "Ignacio",
+        "Comisi\u00c3\u00b3n generada": 14394.0,
+        "ID_ordencompra": 1,
+        "Monto de compra": 287880,
+        "Nombre del vendedor": "Hugo Araya"
+    },
+    {
+        "Nombre del vendedor": "Juan Perez",
+        "ID_ordencompra": 2,
+        "Monto de compra": 150000,
+        "Cliente": "Pedro Gomez",
+        "Comisi\u00f3n generada": 3000
+    }
+]

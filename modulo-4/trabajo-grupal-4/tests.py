@@ -19,16 +19,29 @@ print("==================================================")
 print("=========================pruebas de transacciones=========================")
 #compra1 = Compra(cliente1, producto1, sucursal_mall_plaza, vendedor1, 1001)#para probar desbordado de stock
 #compra1 = Compra(cliente1, producto1, sucursal_mall_plaza, vendedor1, 4)
-compra1 = Compra(cliente2, producto1, sucursal_mall_plaza, vendedor3, 10, True)
-vendedor3.vender(compra1)
 
-compra2 = Compra(cliente1, producto3, sucursal_mall_plaza, vendedor1, 10, False)
-vendedor1.vender(compra2)
-compra1.procesar_compra()
-compra2.procesar_compra()
+ocv20231 = OrdenCompra(producto1, True)
+ocv20232 = OrdenCompra(producto2, False)
+
 print(vendedor1.porcentaje_comision())
 vendedor1.porcentaje_comision("12345677-1", 50)
 
+ocv20231 = OrdenCompra(producto1, True)
+ocv20232 = OrdenCompra(producto2, False)
+ocv20233 = OrdenCompra(producto3, False)
+
+compra1 = Compra(cliente1, ocv20231, sucursal_mall_plaza, 10)
+compra2 = Compra(cliente1, ocv20232, sucursal_mall_plaza, 10)
+
+#esta compra tiene más de 10 unidades (11), arroja NoSeraMuchoError
+compra3 = Compra(cliente1, ocv20232, sucursal_mall_plaza, 11)
+
+#compra3 = Compra(cliente1, producto3, sucursal_mall_plaza, vendedor1, 11, False)
+vendedor1.vender(compra1)
+#compra1.procesar_compra()
+#compra2.procesar_compra()
+#vendedor1.porcentaje_comision("12345677-1", 50)
+print("==================================================")
 print("pruebas nuevas clases Sucursal y Bodega")
 print("sucursal", sucursal_mall_plaza.stocks)
 sucursal_mall_plaza.stock("001", 49) #agrega stock
@@ -43,6 +56,13 @@ print("bodega", bodega_principal.stocks)
 print("sucursal", sucursal_mall_plaza.stocks)
 
 
+#Pruebas de try-except:
+
+#TypeError:
+cliente5 = Cliente("id5", "Luis", "Gonzalez", "XXXXXXXXXXXXXXX", "20-febrero", "cuarenta")
+
+bodega_principal.define_stock(3, 0) #probando quiebre stock
+
 #pruebas de try-except:
 
 #TypeError por formato de edad:
@@ -50,7 +70,6 @@ cliente6 = Cliente("id5", "Luis", "Gonzalez", "XXXXXXXXXXXXXXX", "20-febrero", 0
 
 #Excepción personalizada
 
-compra3 = Compra(cliente1, producto3, sucursal_mall_plaza, vendedor1, 11, False)
 
 #Excepción promedio compras:
 
@@ -59,4 +78,5 @@ cliente1.promedio_compras() #cliente con compras
 
 #probar ValueError en función revisar_stocks:
 #bodega_principal.define_stock(3, 0) #probando quiebre stock
+
 
