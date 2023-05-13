@@ -19,35 +19,27 @@ print("==================================================")
 print("=========================pruebas de transacciones=========================")
 #compra1 = Compra(cliente1, producto1, sucursal_mall_plaza, vendedor1, 1001)#para probar desbordado de stock
 #compra1 = Compra(cliente1, producto1, sucursal_mall_plaza, vendedor1, 4)
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
 
 ocv20231 = OrdenCompra(producto1, True)
 ocv20232 = OrdenCompra(producto2, False)
->>>>>>> 59ccc411c7f616daa082b458428d5db960b09b74
-compra1 = Compra(cliente2, producto1, sucursal_mall_plaza, vendedor3, 10, True) 
-compra1 = Compra(cliente2, producto1, sucursal_mall_plaza, vendedor3, 10, True)
 
-vendedor3.vender(compra1)
-compra2 = Compra(cliente1, producto3, sucursal_mall_plaza, vendedor1, 10, False)
-vendedor1.vender(compra2)
-compra1.procesar_compra()
-compra2.procesar_compra()
+
+
+
 print(vendedor1.porcentaje_comision())
 vendedor1.porcentaje_comision("12345677-1", 50)
-<<<<<<< HEAD
-=======
+
 ocv20231 = OrdenCompra(producto1, True)
 ocv20232 = OrdenCompra(producto2, False)
->>>>>>> 44fd2eefc14bc3e645544bb4832c8c8d45546f69
-=======
->>>>>>> 59ccc411c7f616daa082b458428d5db960b09b74
+ocv20233 = OrdenCompra(producto3, False)
 
 compra1 = Compra(cliente1, ocv20231, sucursal_mall_plaza, 10)
-#vendedor3.vender(compra1)
 compra2 = Compra(cliente1, ocv20232, sucursal_mall_plaza, 10)
+
+#esta compra tiene más de 10 unidades (11), arroja NoSeraMuchoError
+compra3 = Compra(cliente1, ocv20232, sucursal_mall_plaza, 11)
+
+#compra3 = Compra(cliente1, producto3, sucursal_mall_plaza, vendedor1, 11, False)
 vendedor1.vender(compra1)
 #compra1.procesar_compra()
 #compra2.procesar_compra()
@@ -81,7 +73,6 @@ cliente6 = Cliente("id5", "Luis", "Gonzalez", "XXXXXXXXXXXXXXX", "20-febrero", 0
 
 #Excepción personalizada
 
-compra3 = Compra(cliente1, producto3, sucursal_mall_plaza, vendedor1, 11, False)
 
 #Excepción promedio compras:
 
