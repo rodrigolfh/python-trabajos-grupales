@@ -1,11 +1,21 @@
 import time
 from excepciones import NoSeraMuchoException
+import json
+
+#si no hay un stocks.json, lo crea:
+ruta_json_stocks = "" 
+with open("stocks.json", "w") as escribir:
+    json.dump("", escribir)
+    
 
 
 #Se solicita que los atributos __saldo (Cliente), __Impuesto (Producto) y __Comision (Bodeguero) se
 #encuentren encapsulados. (hecho ok)
 productos = []
 clientes = []
+
+
+
 
 
 class Cliente:
@@ -131,6 +141,10 @@ class Proveedor:
 #============================FIN CLASE PROVEEDOR==================================
 ##clase Casa_Matriz
 
+#inicializar stocks.json
+
+
+
 class Empresa:
 
     def __init__(self, nombre_empresa, rut, dirección):
@@ -152,7 +166,7 @@ class Empresa:
         for key, value in self.stocks.items():
             print(f"SKU: {key}, STOCK: {value} unidades")
 
-    def define_stock(self, sku, nuevo_stock):
+    def define_stock(self, sku, nuevo_stock): #override stock
         
         self.stocks[sku] = nuevo_stock
 
@@ -198,11 +212,12 @@ class Bodega(Empresa):
         self._id= nombre 
         self._dirección = dirección
         self.colaboradores = list(colaboradores)
-        self.stocks = stocks
+        self.stocks = stocks #se debe cambiar por llamado a función setter JSON
 
     def __str__(self):
         return(f"Bodega {self._id}")
-        
+
+
 
 ## clase sucursal
 class Sucursal(Empresa):
@@ -210,7 +225,7 @@ class Sucursal(Empresa):
         self._id = nombre
         self._dirección = dirección
         self.colaboradores = list(colaboradores)
-        self.stocks = stocks
+        self.stocks = stocks #se debe cambiar por llamado a función setter JSON
 
     def __str__(self):
         return(f"Sucursal {self._nombre}")
