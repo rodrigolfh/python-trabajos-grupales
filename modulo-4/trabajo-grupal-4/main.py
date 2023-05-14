@@ -1,8 +1,31 @@
-import time
+from datetime import datetime
 
 from excepciones import NoSeraMuchoException
 import json
 
+class InventarioMixin(): 
+    
+    #Esta clase es un "Mixin", una clase sin constructor, que toma los atributos de donde se llama
+    
+    def línea(self, tipo_movimiento = None, documento_asociado = None, responsable= None, desde = None, hacia = None, movimiento = None, saldo=None):
+        momento = datetime.now().timestamp() #timestamp en formato UNIX, ej: 1669123919.331225, más fácil para ordenar y da un valor único que sirve de ID
+        tipo_lugar = self.tipo_lugar #Sucursal o Bodega, lo saca de la clase
+        nombre_lugar = self._id #nombre instancia
+        self.tipo_movimiento = tipo_movimiento
+        tipo_movimiento = self.tipo_movimiento #por ejemplo reposición, venta, override (definir_stock)
+        documento_asociado = documento_asociado #ej: orden de compra
+        desde = desde # ej: desde sucursal
+        hacia = hacia # hacia cliente
+        movimiento = movimiento #ej si se agregan 3, es 3. si se sacan 2 es -2
+        saldo_anterior = 0 #PENDIENTE: BUSCAR ÚLTIMO SALDO EN JSON DE STOCKS!!!!!!!!!!!!!!!!!!!!!!!!!
+        if saldo:
+            nuevo_saldo = saldo
+
+        else:
+            nuevo_saldo = saldo_anterior + saldo
+        print({"momento": momento, "tipo_lugar": tipo_lugar, "nombre_lugar": nombre_lugar, "tipo_movimiento": tipo_movimiento, "documento_asociado": documento_asociado, "responsable": responsable, "desde": desde, "hacia": hacia, "movimiento": movimiento, "saldo": nuevo_saldo})
+       
+        return {"momento": momento, "tipo_lugar": tipo_lugar, "nombre_lugar": nombre_lugar, "tipo_movimiento": tipo_movimiento, "documento_asociado": documento_asociado, "responsable": responsable, "desde": desde, "hacia": hacia, "movimiento": movimiento, "saldo": nuevo_saldo}
 #si no hay un stocks.json, lo crea:
 ruta_json_stocks = "" 
 with open("stocks.json", "w") as escribir:
@@ -172,7 +195,7 @@ class Proveedor:
 
 
 
-class Empresa:
+class Empresa(InventarioMixin):
 
     def __init__(self, nombre, dirección):
         self._id = nombre
@@ -195,6 +218,7 @@ class Empresa:
     def define_stock(self, sku, nuevo_stock): #override stock
         
         self.stocks[sku] = nuevo_stock
+        self.línea(tipo_movimiento = "override", documento_asociado = None, desde = None, hacia = None, movimiento = None, saldo=nuevo_stock)
 
     def stock(self, sku, modificación_stock = None): #obtiene la cantidad de unidades de un sku dado, o redefine si se le entrega además una cantidad
         #mantiene funcionalidad del método stock que tenía la clase Producto
@@ -210,13 +234,15 @@ class Empresa:
         self.límite = límite  #si baja de esto, se pide a bodega
         self.pedido = pedido  #tamaño estándar de pedido a bodega
         self.bodega = bodega  #bodega de la que se sacaría reposición
-        
+
         for key, value in self.stocks.items():
             if self.stocks[key] < self.límite and self.bodega.stock(key) >= self.pedido: #si baja del límite y = o + del límite
                 print(f"Stock del producto SKU {key} ha bajado de {self.límite}. Pidiendo {self.pedido} a {self.bodega}")
                 self.bodega.stock(key, -self.pedido) #descuenta de bodega                    
+                self.línea(tipo_movimiento = "revisa_stock", documento_asociado = None, desde = self.bodega, hacia = "sucursal", movimiento = -self.pedido, saldo=None)
                 self.stock(key, +self.pedido) #agrega a sucursal
                 print(f"Se ha repuesto {self.pedido} al stock del producto SKU: {key}")
+                self.línea(tipo_movimiento = "revisa_stock", documento_asociado = None, desde = self.bodega, hacia = "sucursal", movimiento = self.pedido, saldo=None)
             
             elif self.stocks[key] < self.límite and self.bodega.stock(key) == 0:
                 print(f"El producto SKU: {key} tiene sólo {value} unidades y se agotó en bodega")
@@ -224,7 +250,9 @@ class Empresa:
             elif (self.stocks[key] < self.límite) and (self.bodega.stock(key) < self.pedido): #sino, se pide todo lo que quede en la bodega de ese sku
                 lo_que_queda = self.bodega.stock(key)
                 self.bodega.stock(key, -lo_que_queda)
+                self.línea(tipo_movimiento = "revisa_stock", documento_asociado = None, desde = self.bodega, hacia = "sucursal", movimiento = -lo_que_queda, saldo=None)
                 self.stock(key, +lo_que_queda) #agrega a sucursal lo que quedaba en bodega
+                self.línea(tipo_movimiento = "revisa_stock", documento_asociado = None, desde = self.bodega, hacia = "sucursal", movimiento = lo_que_queda, saldo=None)
                 
                 print(f"Solo quedaban {lo_que_queda} unidades del producto SKU:{key}, se repusieron todas")
  
@@ -238,7 +266,7 @@ class Bodega(Empresa):
         super().__init__(nombre, dirección)           
         self.colaboradores = list(colaboradores)
         self.stocks = stocks #se debe cambiar por llamado a función setter JSON
-
+        self.tipo_lugar = "Bodega"
     def __str__(self):
         return(f"Bodega {self._id}")
 
@@ -250,19 +278,22 @@ class Sucursal(Empresa):
         super().__init__(nombre, dirección)  
         self.colaboradores = list(colaboradores)
         self.stocks = stocks #se debe cambiar por llamado a función setter JSON
+        self.tipo_lugar = Sucursal
 
     def __str__(self):
         return(f"Sucursal {self._nombre}")
 #============================FIN CLASE SUCURSAL==================================
 
         ##se agrega la clase compra
-class Compra:
+class Compra(InventarioMixin):
     def __init__(self, cliente, ordencompra, sucursal, cantidad):
         
         self.cliente = cliente
         self.producto = ordencompra.producto #SKU
         self.sucursal = sucursal
-
+        self.orden_de_compra = ordencompra
+        self.tipo_lugar = "sucursal"
+        self._id = sucursal
         
         self.cantidad = cantidad
         try:
@@ -271,13 +302,14 @@ class Compra:
         except NoSeraMuchoException:
             print(f"No se puede comprar más de 10 unidades, usted intentó comprar {cantidad}")
      
-        self.cantidad = cantidad
+       
         self.con_despacho = ordencompra.despacho
     #logica:
     #hice los minimos cambios posibles para que vendedor pueda ejecutar la venta mediante los recursos que le pase OrdenCompra en vez de acceder a los productos directamente.
     #a futuro presumo que la logica podría ser que la orden de compra incluya la sucursal de origen para determinar de donde descontar el stock y tal.
     def procesar_compra(self, vendedor):
         self.vendedor = vendedor
+        self.tipo_movimiento = "compra" #para usar en InventarioMixin
         print(f"Venta inicializada por {self.vendedor.nombre}:")
         gasto = self.cantidad*self.producto.valor_total #el gasto del cliente debe incluir el impuesto
         print("Detalle de la transacción a realizar:")
@@ -285,6 +317,7 @@ class Compra:
         impuestos = int(round(self.producto.valor_neto * (self.producto.impuesto/100)))*self.cantidad #calculo el impuesto de la compra
         print(f"Impuestos: ({self.producto.impuesto}%) ${impuestos}")
         print(f"Valor neto: {self.cantidad}*${self.producto.valor_total} = ${gasto}")
+       
         if self.con_despacho: 
             self.producto.valor_total+=5000 #aumento el valor total del producto por el costo del despacho, individualmente, textual según lo del ejercicio.
             gasto = self.cantidad*self.producto.valor_total #actualizo el gasto para reflejar el costo del despacho
@@ -304,6 +337,8 @@ class Compra:
             #realizamos deducciones y adicion de comision ganada
             self.cliente.saldo(-gasto) 
             self.sucursal.stock(self.producto.sku, -self.cantidad)
+            #descuento a través de InventarioMixin:
+            self.línea(tipo_movimiento = "compra", documento_asociado = self.orden_de_compra, responsable = self.vendedor, desde = self.sucursal, hacia = self.cliente , movimiento = -self.cantidad, saldo = None)
             print(f"comision es de {self.vendedor.porcentaje_comision()}%")
             self.vendedor.set_comision_acumulativa(gasto * self.vendedor.porcentaje_comision()/100) 
             #porcentaje comision te devuelve un numero entero representando su cut y multiplicamos por el 
@@ -326,6 +361,22 @@ class Compra:
             print("No tiene saldo suficiente para concretar la transacción")
              
 #===================================FIN CLASE COMPRA=====================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #===================================INSTANCIACIONES DE EJEMPLO=====================================
 proveedor1 = Proveedor("111111111", "Proveedor1", "Falabella", "Mexico", "Persona Juridica")
 proveedor2 = Proveedor("222222222", "Proveedor2", "Ripley", "Chile", "Persona Juridica")
