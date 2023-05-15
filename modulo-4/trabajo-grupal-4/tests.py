@@ -61,7 +61,7 @@ print("sucursal", sucursal_mall_plaza.stocks)
 #TypeError:
 cliente5 = Cliente("id5", "Luis", "Gonzalez", "XXXXXXXXXXXXXXX", "20-febrero", "cuarenta")
 
-bodega_principal.define_stock(3, 0) #probando quiebre stock
+bodega_principal.define_stock("003", 0) #probando quiebre stock
 
 #pruebas de try-except:
 

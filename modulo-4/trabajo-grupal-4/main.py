@@ -6,17 +6,17 @@ import os
 
 class InventarioMixin(): 
     
-    #Esta clase es un "Mixin", una clase sin constructor, que toma los atributos de donde se llama
+    #Esta clase es un "Mixin", una clase sin constructor, que toma los atributos desde donde se llama
     
-    def línea(self, tipo_movimiento = None, documento_asociado = None, responsable= None, desde = None, hacia = None, movimiento = 0, saldo = 0):
+    def línea(self, tipo_movimiento = None, producto= None, documento_asociado = None, responsable= None, desde = None, hacia = None, movimiento = 0, saldo = 0):
         timestamp = datetime.now().timestamp() #timestamp en formato UNIX, ej: 1669123919.331225, más fácil para ordenar y da un valor único que sirve de ID
         tipo_lugar = self.tipo_lugar #Sucursal o Bodega, lo saca de la clase
         nombre_lugar = self._id #nombre instancia
         self.tipo_movimiento = tipo_movimiento
-        tipo_movimiento = self.tipo_movimiento #por ejemplo reposición, venta, override (definir_stock)
+        tipo_movimiento = tipo_movimiento #por ejemplo reposición, venta, override (definir_stock de Empresa)
         documento_asociado = documento_asociado #ej: orden de compra
         desde = desde # ej: desde sucursal
-        hacia = hacia # hacia cliente
+        hacia = hacia # hacia rut cliente
         if not movimiento:
             movimiento = 0
         
@@ -34,13 +34,15 @@ class InventarioMixin():
 
             #buscar último saldo de nombre_lugar 
             for item in datos_json:
-                if datos_json[item]["nombre_lugar"] == nombre_lugar and float(item) > float(último_timestamp):
+                if datos_json[item]["nombre_lugar"] == nombre_lugar and datos_json[item]["producto"] == producto and float(item) > float(último_timestamp):
                     último_timestamp = item
                     último_saldo = datos_json[último_timestamp]["saldo"] 
-            
-            nuevo_saldo = último_saldo + movimiento
-        
-        nueva_línea =  {"tipo_lugar": tipo_lugar, "nombre_lugar": nombre_lugar, "tipo_movimiento": tipo_movimiento, "documento_asociado": documento_asociado, "responsable": responsable, "desde": desde, "hacia": hacia, "movimiento": movimiento, "saldo": nuevo_saldo}
+            if tipo_movimiento != "override": #si el movimiento NO es override, se puede calcular el saldo.
+                nuevo_saldo = último_saldo + movimiento
+                
+            elif tipo_movimiento == "override": #si el movimiento SI es un override de define_stock, el saldo nuevo será el definido por el override
+                nuevo_saldo = saldo
+        nueva_línea =  {"tipo_lugar": tipo_lugar, "nombre_lugar": nombre_lugar, "tipo_movimiento": tipo_movimiento, "producto": producto, "documento_asociado": documento_asociado, "responsable": responsable, "desde": desde, "hacia": hacia, "movimiento": movimiento, "saldo": nuevo_saldo}
 
         if os.path.isfile(ruta_archivo) and os.path.getsize(ruta_archivo) > 0: #si el archivo existe y no está vacío:
                 
@@ -269,12 +271,13 @@ class Empresa(InventarioMixin):
     def define_stock(self, sku, nuevo_stock): #override stock
         
         self.stocks[sku] = nuevo_stock
-        self.línea(tipo_movimiento = "override", documento_asociado = None, desde = None, hacia = None, movimiento = None, saldo=nuevo_stock)
+        self.línea(tipo_movimiento = "override", producto=sku, saldo=nuevo_stock)
 
-    def stock(self, sku, modificación_stock = None, tipo_movimiento = None, documento_asociado = None, responsable = None, desde = None, hacia = None): #obtiene la cantidad de unidades de un sku dado, o redefine si se le entrega además una cantidad
+    def stock(self, sku, modificación_stock = None, tipo_movimiento = None,  documento_asociado = None, responsable = None, desde = None, hacia = None): #obtiene la cantidad de unidades de un sku dado, o redefine si se le entrega además una cantidad
         #mantiene funcionalidad del método stock que tenía la clase Producto
         self.modificación_stock = modificación_stock
         self.tipo_movimiento = tipo_movimiento
+        self.producto = sku
         self.documento_asociado = documento_asociado
         self.responsable = responsable
         self.desde = desde
@@ -285,7 +288,7 @@ class Empresa(InventarioMixin):
         elif modificación_stock:
             self.stocks[sku] += modificación_stock
             print(f"El producto SKU:{sku} se modificó así: {modificación_stock:+}.") #:+ muestra el signo, sino cuando es positivo no se ve
-            self.línea(tipo_movimiento = self.tipo_movimiento, documento_asociado = self.documento_asociado, responsable = self.responsable, desde = self.desde, hacia = self.hacia , movimiento = self.modificación_stock)
+            self.línea(tipo_movimiento = self.tipo_movimiento, documento_asociado = self.documento_asociado, producto = self.producto, responsable = self.responsable, desde = self.desde, hacia = self.hacia , movimiento = self.modificación_stock)
 
     def revisar_stocks(self, límite, pedido, bodega): #revisa si stocks bajan de cierto número para pedir más a bodega.
         self.límite = límite  #si baja de esto, se pide a bodega
