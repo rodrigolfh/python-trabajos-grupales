@@ -1,5 +1,4 @@
 from datetime import datetime
-
 from excepciones import NoSeraMuchoException
 import json
 import os
@@ -10,11 +9,12 @@ class InventarioMixin():
     
     #la función .línea(*) crea una entrada de diccionario con el saldo actualizado y más información relevante,  y la agrega al json stocks.json.
     def línea(self, tipo_movimiento = None, producto= None, documento_asociado = None, responsable= None, desde = None, hacia = None, movimiento = 0, saldo = 0):
+        """Agrega una línea al registro de stocks.json"""
         timestamp = datetime.now().timestamp() #timestamp en formato UNIX, ej: 1669123919.331225, más fácil para ordenar y da un valor único que sirve de ID
         tipo_lugar = self.tipo_lugar #Sucursal o Bodega, lo saca de la clase
         nombre_lugar = self._id #nombre instancia
         self.tipo_movimiento = tipo_movimiento
-        tipo_movimiento = tipo_movimiento #por ejemplo reposición, venta, override (definir_stock de Empresa)
+        tipo_movimiento = tipo_movimiento #por ejemplo reposición, venta, override (override con define_stock de Empresa)
         documento_asociado = documento_asociado #ej: orden de compra
         desde = desde # ej: desde sucursal
         hacia = hacia # hacia rut cliente
@@ -43,6 +43,8 @@ class InventarioMixin():
                 
             elif tipo_movimiento == "override": #si el movimiento SI es un override de define_stock, el saldo nuevo será el definido por el override
                 nuevo_saldo = saldo
+
+        #se crea nueva línea para luego agregarla a stocks.json        
         nueva_línea =  {"tipo_lugar": tipo_lugar, "nombre_lugar": nombre_lugar, "tipo_movimiento": tipo_movimiento, "producto": producto, "documento_asociado": documento_asociado, "responsable": responsable, "desde": desde, "hacia": hacia, "movimiento": movimiento, "saldo": nuevo_saldo}
 
         if os.path.isfile(ruta_archivo) and os.path.getsize(ruta_archivo) > 0: #si el archivo existe y no está vacío:
@@ -58,11 +60,11 @@ class InventarioMixin():
             datos_json[timestamp] = nueva_línea
         
         actualizado_json = json.dumps(datos_json, indent=4)
-        # Esobreescribe el json con actualizado_json
+        # Sobreescribe el json con actualizado_json
         with open('stocks.json', 'w') as file:
             file.write(actualizado_json)
 
-    def stock(self, sku):
+    def stock(self, sku): #como es un mixin, el self es el de la clase que llama a esta.
         """Devuelve stock"""
         nombre_lugar = self._id
         producto = sku
@@ -77,33 +79,15 @@ class InventarioMixin():
                     if datos_json[item]["nombre_lugar"] == nombre_lugar and datos_json[item]["producto"] == producto and float(item) > float(último_timestamp):
                         último_timestamp = item
                 return(datos_json[último_timestamp]["saldo"])
-            except KeyError:
+            except KeyError: # cuando último_timestamp = 0, por lo tanto devolvemos 0 porque NO existe registro de dicho producto.
                 return 0
-
-
-
-
-        
-        
-        #with open(archivo, 'w', encoding='utf-8') as archivo:
-        #    json.dump(actualizado, file, indent=4, ensure_ascii=False) 
-       
-
-
-
-
-
-
-
-    
-from excepciones import NoSeraMuchoException
-
+#
+#
+#
+#
+#vestigio de trabajos anteriores   EVALUAR QUITAR
 productos = []
 clientes = []
-
-
-
-
 
 class Cliente:
     def __init__(self, id_cliente, nombre, apellido, correo, fecha_Registro, saldo, edad = None):
