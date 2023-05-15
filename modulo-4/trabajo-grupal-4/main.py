@@ -7,7 +7,7 @@ class InventarioMixin():
     
     #Esta clase es un "Mixin", una clase sin constructor, que toma los atributos de donde se llama
     
-    def línea(self, tipo_movimiento = None, documento_asociado = None, responsable= None, desde = None, hacia = None, movimiento = None, saldo=None):
+    def línea(self, tipo_movimiento = None, documento_asociado = None, responsable= None, desde = None, hacia = None, movimiento = 0, saldo = 0):
         momento = datetime.now().timestamp() #timestamp en formato UNIX, ej: 1669123919.331225, más fácil para ordenar y da un valor único que sirve de ID
         tipo_lugar = self.tipo_lugar #Sucursal o Bodega, lo saca de la clase
         nombre_lugar = self._id #nombre instancia
@@ -58,7 +58,8 @@ class Cliente:
             print("TypeError: EDAD debe ser un entero")
         self._total_compras = 0
         self._total_gastado = 0
-            
+    def __str__(self):
+        return self.nombre
 
     def saldo(self, *cambio):
         if len(cambio) == 0:
@@ -100,6 +101,9 @@ class Vendedor:
         self.edad = edad
         self.__porcentaje_comision = porcentaje_comision
     
+    def __str__(self):
+        return self.nombre
+
     def set_comision_acumulativa(self, comision):
         self.__comision_acumulativa += comision
 
@@ -154,6 +158,8 @@ class OrdenCompra:
                 self.Id_ordencompra = correlativos_OC[-1]+1
             if type(producto) is Producto: self.producto = producto
             if type(despacho) is bool: self.despacho = despacho
+    def __str__(self):
+        return ("OC" + self.Id_ordencompra)
         
 class Producto:
     
@@ -166,6 +172,9 @@ class Producto:
         self.__impuesto = 19
         self.valor_total = valor_neto + int(round(valor_neto * (self.__impuesto/100)))
         self.color = color
+    
+    def __str__(self):
+        return self.sku
     
     def definir_impuesto_producto(self, sku, porcentaje_impuesto):
         if sku == self.sku:
@@ -220,15 +229,21 @@ class Empresa(InventarioMixin):
         self.stocks[sku] = nuevo_stock
         self.línea(tipo_movimiento = "override", documento_asociado = None, desde = None, hacia = None, movimiento = None, saldo=nuevo_stock)
 
-    def stock(self, sku, modificación_stock = None): #obtiene la cantidad de unidades de un sku dado, o redefine si se le entrega además una cantidad
+    def stock(self, sku, modificación_stock = None, tipo_movimiento = None, documento_asociado = None, responsable = None, desde = None, hacia = None): #obtiene la cantidad de unidades de un sku dado, o redefine si se le entrega además una cantidad
         #mantiene funcionalidad del método stock que tenía la clase Producto
-        
+        self.modificación_stock = modificación_stock
+        self.tipo_movimiento = tipo_movimiento
+        self.documento_asociado = documento_asociado
+        self.responsable = responsable
+        self.desde = desde
+        self.hacia = hacia
         if modificación_stock == None:
             return(self.stocks[sku])
         
         elif modificación_stock:
             self.stocks[sku] += modificación_stock
-            print(f"El producto SKU:{sku} tiene se modificó así: {modificación_stock:+}.") #:+ muestra el signo, sino cuando es positivo no se ve
+            print(f"El producto SKU:{sku} se modificó así: {modificación_stock:+}.") #:+ muestra el signo, sino cuando es positivo no se ve
+            self.línea(tipo_movimiento = self.tipo_movimiento, documento_asociado = self.documento_asociado, responsable = self.responsable, desde = self.desde, hacia = self.hacia , movimiento = self.modificación_stock)
 
     def revisar_stocks(self, límite, pedido, bodega): #revisa si stocks bajan de cierto número para pedir más a bodega.
         self.límite = límite  #si baja de esto, se pide a bodega
@@ -267,8 +282,9 @@ class Bodega(Empresa):
         self.colaboradores = list(colaboradores)
         self.stocks = stocks #se debe cambiar por llamado a función setter JSON
         self.tipo_lugar = "Bodega"
+        
     def __str__(self):
-        return(f"Bodega {self._id}")
+        return "Bodega" + self.nombre 
 
 
 
@@ -278,14 +294,17 @@ class Sucursal(Empresa):
         super().__init__(nombre, dirección)  
         self.colaboradores = list(colaboradores)
         self.stocks = stocks #se debe cambiar por llamado a función setter JSON
-        self.tipo_lugar = Sucursal
+        self.tipo_lugar = "sucursal"
+        
 
-    def __str__(self):
-        return(f"Sucursal {self._nombre}")
+    def __str__(self):        
+        return "Sucursal" + self.nombre
 #============================FIN CLASE SUCURSAL==================================
 
-        ##se agrega la clase compra
-class Compra(InventarioMixin):
+        ##se agrega la clase compra. funciona sin agregar como herencia Sucursal, Bodega, Vendedor, Cliente, y OrdenCompra,
+        #pero si no se agregan Compra no accede a los __str__ de estas.
+class Compra(Sucursal, Bodega, Vendedor, Cliente, OrdenCompra, InventarioMixin): 
+
     def __init__(self, cliente, ordencompra, sucursal, cantidad):
         
         self.cliente = cliente
@@ -296,6 +315,8 @@ class Compra(InventarioMixin):
         self._id = sucursal
         
         self.cantidad = cantidad
+        super().__str__
+       
         try:
             if self.cantidad > 10:
                 raise NoSeraMuchoException("No se pueden comprar más de 10 unidades")
@@ -304,6 +325,9 @@ class Compra(InventarioMixin):
      
        
         self.con_despacho = ordencompra.despacho
+
+        def __str__(self):
+            return self.orden_de_compra
     #logica:
     #hice los minimos cambios posibles para que vendedor pueda ejecutar la venta mediante los recursos que le pase OrdenCompra en vez de acceder a los productos directamente.
     #a futuro presumo que la logica podría ser que la orden de compra incluya la sucursal de origen para determinar de donde descontar el stock y tal.
@@ -336,9 +360,12 @@ class Compra(InventarioMixin):
             #la comision incluirá el impuesto como parte del monto gastado
             #realizamos deducciones y adicion de comision ganada
             self.cliente.saldo(-gasto) 
-            self.sucursal.stock(self.producto.sku, -self.cantidad)
+            self.desde = self.sucursal._id
+            self.hacia = self.cliente.id_cliente
+           
+            self.sucursal.stock(self.producto.sku, modificación_stock = -self.cantidad, tipo_movimiento = "compra", documento_asociado = self.orden_de_compra.Id_ordencompra, responsable = self.vendedor.run, desde = self.desde, hacia = self.hacia)
+            
             #descuento a través de InventarioMixin:
-            self.línea(tipo_movimiento = "compra", documento_asociado = self.orden_de_compra, responsable = self.vendedor, desde = self.sucursal, hacia = self.cliente , movimiento = -self.cantidad, saldo = None)
             print(f"comision es de {self.vendedor.porcentaje_comision()}%")
             self.vendedor.set_comision_acumulativa(gasto * self.vendedor.porcentaje_comision()/100) 
             #porcentaje comision te devuelve un numero entero representando su cut y multiplicamos por el 
@@ -391,8 +418,8 @@ producto4 = Producto("004", "Producto 4", "Deportes", proveedor4, 5990)
 producto5 = Producto("005", "Producto 5", "Electro", proveedor5, 29990)
 
 telovendo = Empresa("Te Lo Vendo", "La Punta del Cerro s/n")
-bodega_principal = Bodega("001", "Calle 1 sin número", {"12345677-1": True, "12345688-2": True, "12345655-4": True}, {"001": 10000,"002": 10000,"003": 10000,"004": 10000,"005": 10000})
-sucursal_mall_plaza = Sucursal("001", "Calle 2 sin número", {"12345677-1": True, "12345688-2": True, "12345655-4": True}, {"001": 1000,"002": 1000,"003": 1000,"004": 1000,"005": 1000})
+bodega_principal = Bodega("Bodega Principal", "Calle 1 sin número", {"12345677-1": True, "12345688-2": True, "12345655-4": True}, {"001": 10000,"002": 10000,"003": 10000,"004": 10000,"005": 10000})
+sucursal_mall_plaza = Sucursal("Sucursal Mall Plaza", "Calle 2 sin número", {"12345677-1": True, "12345688-2": True, "12345655-4": True}, {"001": 1000,"002": 1000,"003": 1000,"004": 1000,"005": 1000})
 
 vendedor1 = Vendedor("12345677-1", "Hugo", "Araya", "Zapatería",  5, 50)
 vendedor2 = Vendedor("12345688-2", "Paco", "Iriarte", "Deportes", 5, 51)
@@ -403,8 +430,8 @@ vendedor5 = Vendedor("12345622-5", "María", "González", "Menaje", 5, 54)
 #Se debe crear métodos en la clase Cliente, lo cual puedan agregar y mostrar saldo.
 #Como se encuentra trabajando en el desarrollo del módulo de Python Básico, se solicita integrar
 #correctamente los métodos de las clases en las opciones del menú desarrollado.
-cliente1 = Cliente("id1", "Ignacio", "Fuentealba", "correo@gmail.com", "25-enero", 25000000)
-cliente2 = Cliente("id2", "Juan", "Perez", "pepo@hotmail.com", "15-enero", 0)
-cliente3 = Cliente("id3", "Pedro", "Gomez", "XXXXXXXXXXXXXXX", "20-enero", 100000)
-cliente4 = Cliente("id4", "Maria", "Lopez", "XXXXXXXXXXXXXXX", "20-marzo", 0)
-cliente5 = Cliente("id5", "Luis", "Gonzalez", "XXXXXXXXXXXXXXX", "20-febrero", 0)
+cliente1 = Cliente("14566333-2", "Ignacio", "Fuentealba", "correo@gmail.com", "25-enero", 25000000)
+cliente2 = Cliente("14563533-4", "Juan", "Perez", "pepo@hotmail.com", "15-enero", 0)
+cliente3 = Cliente("14521433-5", "Pedro", "Gomez", "XXXXXXXXXXXXXXX", "20-enero", 100000)
+cliente4 = Cliente("14566643-k", "Maria", "Lopez", "XXXXXXXXXXXXXXX", "20-marzo", 0)
+cliente5 = Cliente("14566133-3", "Luis", "Gonzalez", "XXXXXXXXXXXXXXX", "20-febrero", 0)

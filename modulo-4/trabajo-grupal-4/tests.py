@@ -10,9 +10,9 @@ clientes.append(cliente1)
 #print(f"Saldo de {cliente1.nombre} es {cliente1.saldo}")
 #print("==================================================")
 print(f"stock de producto SKU:{producto1.sku} es de {sucursal_mall_plaza.stock('001')}")
-sucursal_mall_plaza.stock("001", +5)
+sucursal_mall_plaza.stock("001", +5) #Se debe eliminar para tarea 6 y sprint, porque el descuento y modificación ahora lo hace la compra.
 print(f"stock de producto SKU:{producto1.sku} es de {sucursal_mall_plaza.stock('001')}")
-sucursal_mall_plaza.stock("001", -5)
+sucursal_mall_plaza.stock("001", -5) #Se debe eliminar para tarea 6 y sprint, porque el descuento y modificación ahora lo hace la compra.
 print(f"stock de producto SKU:{producto1.sku} es de {sucursal_mall_plaza.stock('001')}")
 
 print("==================================================")
