@@ -2,13 +2,14 @@ from datetime import datetime
 
 from excepciones import NoSeraMuchoException
 import json
+import os
 
 class InventarioMixin(): 
     
     #Esta clase es un "Mixin", una clase sin constructor, que toma los atributos de donde se llama
     
     def línea(self, tipo_movimiento = None, documento_asociado = None, responsable= None, desde = None, hacia = None, movimiento = 0, saldo = 0):
-        momento = datetime.now().timestamp() #timestamp en formato UNIX, ej: 1669123919.331225, más fácil para ordenar y da un valor único que sirve de ID
+        timestamp = datetime.now().timestamp() #timestamp en formato UNIX, ej: 1669123919.331225, más fácil para ordenar y da un valor único que sirve de ID
         tipo_lugar = self.tipo_lugar #Sucursal o Bodega, lo saca de la clase
         nombre_lugar = self._id #nombre instancia
         self.tipo_movimiento = tipo_movimiento
@@ -16,20 +17,61 @@ class InventarioMixin():
         documento_asociado = documento_asociado #ej: orden de compra
         desde = desde # ej: desde sucursal
         hacia = hacia # hacia cliente
-        movimiento = movimiento #ej si se agregan 3, es 3. si se sacan 2 es -2
-        saldo_anterior = 0 #PENDIENTE: BUSCAR ÚLTIMO SALDO EN JSON DE STOCKS!!!!!!!!!!!!!!!!!!!!!!!!!
-        if saldo:
-            nuevo_saldo = saldo
+        if not movimiento:
+            movimiento = 0
+        
+        ruta_archivo = "stocks.json"
+        #buscar último saldo
+        if os.path.isfile(ruta_archivo) and os.path.getsize(ruta_archivo) > 0: #si el archivo existe y no está vacío:
+                
+            with open('stocks.json', 'r') as archivo: #abrir el archivo en modo lectura
+                json_data = archivo.read()
 
+            # Des-serializar el contenido del archivo
+            datos_json = json.loads(json_data)
+            último_timestamp = 0
+            último_saldo = 0
+
+            #buscar último saldo de nombre_lugar 
+            for item in datos_json:
+                if datos_json[item]["nombre_lugar"] == nombre_lugar and float(item) > float(último_timestamp):
+                    último_timestamp = item
+                    último_saldo = datos_json[último_timestamp]["saldo"] 
+            
+            nuevo_saldo = último_saldo + movimiento
+        
+        nueva_línea =  {"tipo_lugar": tipo_lugar, "nombre_lugar": nombre_lugar, "tipo_movimiento": tipo_movimiento, "documento_asociado": documento_asociado, "responsable": responsable, "desde": desde, "hacia": hacia, "movimiento": movimiento, "saldo": nuevo_saldo}
+
+        if os.path.isfile(ruta_archivo) and os.path.getsize(ruta_archivo) > 0: #si el archivo existe y no está vacío:
+                
+            with open('stocks.json', 'r') as archivo: #abrir el archivo en modo lectura
+                json_data = archivo.read()
+
+            # Des-serializar el contenido del archivo
+            datos_json = json.loads(json_data)
+            datos_json[timestamp] = nueva_línea
         else:
-            nuevo_saldo = saldo_anterior + saldo
-        print({"momento": momento, "tipo_lugar": tipo_lugar, "nombre_lugar": nombre_lugar, "tipo_movimiento": tipo_movimiento, "documento_asociado": documento_asociado, "responsable": responsable, "desde": desde, "hacia": hacia, "movimiento": movimiento, "saldo": nuevo_saldo})
+            datos_json = {} 
+            datos_json[timestamp] = nueva_línea
+        
+        actualizado_json = json.dumps(datos_json, indent=4)
+        # Esobreescribe el json con actualizado_json
+        with open('stocks.json', 'w') as file:
+            file.write(actualizado_json)
+
+      
+
+        
+        #with open(archivo, 'w', encoding='utf-8') as archivo:
+        #    json.dump(actualizado, file, indent=4, ensure_ascii=False) 
        
-        return {"momento": momento, "tipo_lugar": tipo_lugar, "nombre_lugar": nombre_lugar, "tipo_movimiento": tipo_movimiento, "documento_asociado": documento_asociado, "responsable": responsable, "desde": desde, "hacia": hacia, "movimiento": movimiento, "saldo": nuevo_saldo}
-#si no hay un stocks.json, lo crea:
-ruta_json_stocks = "" 
-with open("stocks.json", "w") as escribir:
-    json.dump("", escribir)
+
+
+
+
+
+
+
     
 from excepciones import NoSeraMuchoException
 
