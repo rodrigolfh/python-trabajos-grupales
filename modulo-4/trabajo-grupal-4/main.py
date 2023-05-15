@@ -8,6 +8,7 @@ class InventarioMixin():
     
     #Esta clase es un "Mixin", una clase sin constructor, que toma los atributos desde donde se llama
     
+    #la función .línea(*) crea una entrada de diccionario con el saldo actualizado y más información relevante,  y la agrega al json stocks.json.
     def línea(self, tipo_movimiento = None, producto= None, documento_asociado = None, responsable= None, desde = None, hacia = None, movimiento = 0, saldo = 0):
         timestamp = datetime.now().timestamp() #timestamp en formato UNIX, ej: 1669123919.331225, más fácil para ordenar y da un valor único que sirve de ID
         tipo_lugar = self.tipo_lugar #Sucursal o Bodega, lo saca de la clase
@@ -61,8 +62,28 @@ class InventarioMixin():
         with open('stocks.json', 'w') as file:
             file.write(actualizado_json)
 
-      
+    def stock(self, sku):
+        """Devuelve stock"""
+        nombre_lugar = self._id
+        producto = sku
+        with open('stocks.json', 'r') as archivo: #abrir el archivo en modo lectura
+            json_data = archivo.read()
+               # Des-serializar el contenido del archivo
+            datos_json = json.loads(json_data)
+            último_timestamp = 0
+           
+            try:
+                for item in datos_json: #buscar el último timestamp
+                    if datos_json[item]["nombre_lugar"] == nombre_lugar and datos_json[item]["producto"] == producto and float(item) > float(último_timestamp):
+                        último_timestamp = item
+                return(datos_json[último_timestamp]["saldo"])
+            except KeyError:
+                return 0
 
+
+
+
+        
         
         #with open(archivo, 'w', encoding='utf-8') as archivo:
         #    json.dump(actualizado, file, indent=4, ensure_ascii=False) 
@@ -264,10 +285,7 @@ class Empresa(InventarioMixin):
     def set_colaborador(self, rut, estado): #pasarle instancia (ej:vendedor.rut) y estado ('activo' o 'inactivo')
         self.colaboradores[rut] = estado
      
-    def  mostrar_stock(self): #pasarle argumento con método.imprime un dict con los stocks
-        for key, value in self.stocks.items():
-            print(f"SKU: {key}, STOCK: {value} unidades")
-
+    
     def define_stock(self, sku, nuevo_stock): #override stock
         
         self.stocks[sku] = nuevo_stock
@@ -283,7 +301,8 @@ class Empresa(InventarioMixin):
         self.desde = desde
         self.hacia = hacia
         if modificación_stock == None:
-            return(self.stocks[sku])
+            return super().stock(sku) 
+        
         
         elif modificación_stock:
             self.stocks[sku] += modificación_stock
