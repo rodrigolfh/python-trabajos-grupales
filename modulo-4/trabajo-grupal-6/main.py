@@ -165,7 +165,9 @@ class Vendedor:
         self.__comision_acumulativa = __comision
         self.edad = edad
         self.__porcentaje_comision = porcentaje_comision
-    
+        ruta = "comisiones-{}{}.json".format(self.nombre, self.apellido) #crea una ruta de archivo con el nombre del vendedor
+        self.registroventas = ruta
+
     def __str__(self):
         return self.nombre
 
@@ -426,7 +428,7 @@ class Compra(Sucursal, Bodega, Vendedor, Cliente, OrdenCompra, InventarioMixin):
             self.cliente.saldo(-gasto) 
             self.desde = self.sucursal._id
             self.hacia = self.cliente.id_cliente
-           
+            comision_generada = gasto * self.vendedor.porcentaje_comision()/100
             self.sucursal.stock(self.producto.sku, modificación_stock = -self.cantidad, tipo_movimiento = "compra", documento_asociado = self.orden_de_compra.Id_ordencompra, responsable = self.vendedor.run, desde = self.desde, hacia = self.hacia)
             
             #descuento a través de InventarioMixin:
@@ -446,6 +448,44 @@ class Compra(Sucursal, Bodega, Vendedor, Cliente, OrdenCompra, InventarioMixin):
             print(f"stock de producto es {self.sucursal.stock(self.producto.sku)}")
             print(f"comision de vendedor {self.vendedor.nombre} es {self.vendedor.get_comision_acumulativa()}")
             print("Compra realizada con éxito.")
+        
+        
+        #=========================REGISTRO DE VENTAS===========================
+            #Revisamos si existe el archivo.
+            #caso existe y/o está no está en peso 0:
+            if os.path.isfile(self.vendedor.registroventas) and os.path.getsize(self.vendedor.registroventas) > 0: #con esto se corrobora que existe y que no está vacío
+                #el chequeo de getsize es relevante porque puede sino fallar al intentar llenar un archivo que existe pero está vacío (onda, vaciado manualmente)
+                print("archivo existe")
+
+                with open(self.vendedor.registroventas, 'r', encoding='utf-8') as f: #primero lo abro solo para cargar el contenido original en modo de lectura
+                    #es extremadamente importante incluir el enconding en el read también o puedes provocar memes de ZALGO en el json, que empeoran con cada lectura 
+                    contenido = json.load(f)
+                nuevo_item = {
+                                'Nombre del vendedor': f"{' '.join([self.vendedor.nombre, self.vendedor.apellido])}",
+                                'ID_ordencompra': self.orden_de_compra.Id_ordencompra, 
+                                'Monto de compra':gasto, 
+                                'Cliente':self.cliente.nombre, 
+                                'Comisión generada':comision_generada}
+                contenido.append(nuevo_item)
+
+                with open(self.vendedor.registroventas, 'w', encoding='utf-8') as f:
+                    json.dump(contenido, f, indent=4, ensure_ascii=False)
+            else:
+                print("archivo no existe, creando..")
+                #"w" para modo "wrande"
+                with open(self.vendedor.registroventas, "w", encoding='utf-8') as fichero:
+                    #cabecera = ['Nombre del vendedor', 'Orden de compra', 'Total', 'Cliente', 'Comisión']
+                    contenedor = []
+                    contenido = {
+                                'Nombre del vendedor': f"{' '.join([self.vendedor.nombre, self.vendedor.apellido])}",
+                                'ID_ordencompra': self.orden_de_compra.Id_ordencompra, 
+                                'Monto de compra':gasto, 
+                                'Cliente':self.cliente.nombre, 
+                                'Comisión generada':comision_generada}
+                    contenedor.append(contenido)
+                    json.dump(contenedor, fichero, indent=4, ensure_ascii=False)
+                fichero.close()
+        #============================================FALLO DE TRANSACCION===================================
         elif(self.sucursal.stock(self.producto.sku)<self.cantidad):
             print("No hay suficientes unidades para concretar la transacción")
         elif(self.cliente.saldo()<gasto):
