@@ -46,7 +46,7 @@ print("==================================================")
 print("pruebas nuevas clases Sucursal y Bodega")
 print("sucursal", sucursal_mall_plaza.stocks)
 sucursal_mall_plaza.stock("001", 49) #agrega stock
-sucursal_mall_plaza.stock("002", -47) #quita stock
+sucursal_mall_plaza.stock("001", -47) #quita stock
 sucursal_mall_plaza.stock("004", 46) #agrega stock
 bodega_principal.define_stock("003", 0) #probando quiebre stock
 bodega_principal.define_stock("005", 199) #probando stock menor a límite
