@@ -3,7 +3,8 @@ from main import *
 #cliente1 = Cliente("id1", "Ignacio", "Fuentealba", "correo@gmail.com", "25-enero", 25000000)
 #producto1 = Producto("001", "Producto 1", "Menaje", proveedor1, 100, 19990)
 
-clientes.append(cliente1)
+clientes.extend([cliente1, cliente2, cliente3, cliente4, cliente5])
+escribir_a_json(clientes)
 
 #print(f"Saldo de {cliente1.nombre} es {cliente1.saldo}")
 #cliente1.saldo -= 5
