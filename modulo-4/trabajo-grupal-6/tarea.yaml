@@ -1,0 +1,10 @@
+link_a_github: "https://github.com/rodrigolfh/python-trabajos-grupales/tree/main/modulo-4/trabajo-grupal-6"
+
+pregunta_a_responder: "Identifique claramente la diferencia entre un archivo XML, JSON y YAML.":
+  - "Si bien los tres lenguajes de intercambio de datos presentan características similares al ser lenguajes de texto más o menos legibles por un humano, existen algunas diferencias:"
+  - "XML agrega contexto y formato a la información almacenada."
+  - "YAML y en menor proporción JSON y XML son muy legibles por un ser humano."
+  - "XML y JSON presentan soporte nativo, mientras YAML debe ser descargado e instalado aparte."
+  - "JSON y XML han sido usados ampliamente durante años, YAML al ser relativamente nuevo no tiene tanta adopción aún."
+  - "JSON es el más rápido al leer y escribir y YAML el más lento."
+  - "JSON tiene los archivos más livianos, sobre todo si quitamos el indenting y se comprime todo en una sola línea"
