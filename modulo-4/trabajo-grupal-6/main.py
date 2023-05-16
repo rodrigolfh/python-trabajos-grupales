@@ -152,7 +152,7 @@ class Vendedor:
         ruta = "comisiones-{}{}.json".format(self.nombre, self.apellido) #crea una ruta de archivo con el nombre del vendedor
         self.registroventas = ruta
 
-    def __str__():
+    def __str__(self):
         return(self.nombre)
 
     def set_comision_acumulativa(self, comision):
@@ -495,3 +495,4 @@ def escribir_a_json(clientes):
 
     # Close the file
     file.close()
+#============================ENVIAR CLIENTES A JSON=============================
