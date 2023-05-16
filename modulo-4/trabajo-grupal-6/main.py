@@ -4,12 +4,17 @@ from excepciones import NoSeraMuchoException
 import json
 import os
 
+productos = []
+clientes = []
+
 class InventarioMixin(): 
-    
-    #Esta clase es un "Mixin", una clase sin constructor, que toma los atributos desde donde se llama
-    
-    #la función .línea(*) crea una entrada de diccionario con el saldo actualizado y más información relevante,  y la agrega al json stocks.json.
+    """
+    Esta clase es un "Mixin", una clase sin constructor, que toma los atributos desde donde se llama
+    """
+
     def línea(self, tipo_movimiento = None, producto= None, documento_asociado = None, responsable= None, desde = None, hacia = None, movimiento = 0, saldo = 0):
+        """La función .línea(*) crea una entrada de diccionario con el saldo actualizado y más información relevante,  y la agrega al json stocks.json.
+"""
         timestamp = datetime.now().timestamp() #timestamp en formato UNIX, ej: 1669123919.331225, más fácil para ordenar y da un valor único que sirve de ID
         tipo_lugar = self.tipo_lugar #Sucursal o Bodega, lo saca de la clase
         nombre_lugar = self._id #nombre instancia
@@ -82,39 +87,19 @@ class InventarioMixin():
 
 
 
-
-        
-        
-        #with open(archivo, 'w', encoding='utf-8') as archivo:
-        #    json.dump(actualizado, file, indent=4, ensure_ascii=False) 
-       
-
-
-
-
-
-
-
     
-from excepciones import NoSeraMuchoException
-
-productos = []
-clientes = []
-
-
-
 
 
 class Cliente:
+    """ Clase que instancia un nuevo cliente"""
     def __init__(self, id_cliente, nombre, apellido, correo, fecha_Registro, saldo, edad = None):
-
-        #tomo saldo como parametro porque en la tarea no le dan un valor por defecto
+        
         self.id_cliente = id_cliente
         self.nombre = nombre
         self.apellido = apellido
         self.correo = correo
         self.fecha_registro = fecha_Registro
-        self.__saldo = saldo #la encapsulacion la hago asi, con __ antes de la definicion del atributo de clase
+        self.__saldo = saldo 
         try:
             self.edad = int(edad)
         except ValueError:
@@ -133,8 +118,7 @@ class Cliente:
             suma = sum(cambio)
             if (suma)+self.__saldo>=0: #si la suma (considerando un negativo posiblemente) es mayor a 0
                 self.__saldo += suma #entonces hace la suma (o resta) de stock.
-                #if cambio_saldo>=0: print(f"Saldo de {self.nombre} {self.apellido} actualizado, se agregó ${cambio_saldo} de saldo, nuevo saldo: {self.__saldo}")
-                #if cambio_saldo<0: print(f"Saldo de {self.nombre} {self.apellido} actualizado, se descontó ${abs(cambio_saldo)} de saldo, nuevo saldo: {self.__saldo}")
+                
             else: 
                 print("Operación no realizada: no hay saldo suficiente para ejecutar la transacción")
 
@@ -168,8 +152,8 @@ class Vendedor:
         ruta = "comisiones-{}{}.json".format(self.nombre, self.apellido) #crea una ruta de archivo con el nombre del vendedor
         self.registroventas = ruta
 
-    def __str__(self):
-        return self.nombre
+    def __str__():
+        return(self.nombre)
 
     def set_comision_acumulativa(self, comision):
         self.__comision_acumulativa += comision
@@ -188,35 +172,12 @@ class Vendedor:
             
     def vender(self, compra):
         compra.procesar_compra(self)
-        
-""" 
-class Compra:
-    def __init__(self, cliente, ordencompra, sucursal, vendedor, cantidad):
-        self.cliente = cliente
-        self.producto = ordencompra.producto #SKU
-        self.sucursal = sucursal
-        self.vendedor = vendedor
-        self.cantidad = cantidad
-        self.con_despacho = ordencompra.despacho
-    #logica:
-    #hice los minimos cambios posibles para que vendedor pueda ejecutar la venta mediante los recursos que le pase OrdenCompra en vez de acceder a los productos directamente.
-    #a futuro presumo que la logica podría ser que la orden de compra incluya la sucursal de origen para determinar de donde descontar el stock y tal.
-    def procesar_compra(self): """
-   
+
 #============================FIN CLASE VENDEDOR==================================
 correlativos_OC = []
 class OrdenCompra:
-    """
-    Se deberá implementar una clase OrdenCompra con los siguientes atributos:
-    a. Id_ordencompra
-    b. producto
-    c. despacho
-    El atributo producto, deberá ser una composición de la clase Producto y el atributo despacho, solo
-    almacenará valores booleanos. En el caso de que el despacho sea True ( Verdadero ), se deberá agregar al
-    valor del producto 5.000 CLP por recargo de despacho y mostrar por consola el total final con el detalle (
-    valor neto, impuesto, despacho, valor total ) el valor final del producto, cuando se utilice la función vender
-    de la clase Vendedor.
-    """
+    """Permite congregar los productos de una compra para su procesamiento en la clase Compra"""
+
     def __init__(self, producto, despacho):
         #Producto ha de ser un objeto producto. Despacho ha de ser bool.
         #id será un correlativo.
@@ -229,6 +190,7 @@ class OrdenCompra:
         return ("OC" + self.Id_ordencompra)
         
 class Producto:
+    """Define producto"""
     
     def __init__(self, sku, nombre, categoria, proveedor, valor_neto, color = None):
         self.sku = sku
@@ -271,12 +233,11 @@ class Proveedor:
 
 
 
-class Empresa(InventarioMixin):
-
+class Empresa(InventarioMixin): #accede a los métodos del mixin
+    """Superclase desde la cual Sucursal y Bodega heredan los métodos para manejo de stock"""
     def __init__(self, nombre, dirección):
         self._id = nombre
         self.dirección = dirección
-        #diccionarios vacíos, solo para poder crear métodos que serán heredados por las clases hijas
         
     def __str__(self):
         return(f"{self._nombre_empresa}, {self._rut}, {self.dirección}")
@@ -284,17 +245,13 @@ class Empresa(InventarioMixin):
     def get_colaboradores(self):
             print(self.colaboradores)
             
-    def set_colaborador(self, rut, estado): #pasarle instancia (ej:vendedor.rut) y estado ('activo' o 'inactivo')
-        self.colaboradores[rut] = estado
-     
-    
     def define_stock(self, sku, nuevo_stock): #override stock
         
-        self.stocks[sku] = nuevo_stock
+        #self.stocks[sku] = nuevo_stock
         self.línea(tipo_movimiento = "override", producto=sku, saldo=nuevo_stock)
 
     def stock(self, sku, modificación_stock = None, tipo_movimiento = None,  documento_asociado = None, responsable = None, desde = None, hacia = None): #obtiene la cantidad de unidades de un sku dado, o redefine si se le entrega además una cantidad
-        #mantiene funcionalidad del método stock que tenía la clase Producto
+        
         self.modificación_stock = modificación_stock
         self.tipo_movimiento = tipo_movimiento
         self.producto = sku
@@ -303,7 +260,7 @@ class Empresa(InventarioMixin):
         self.desde = desde
         self.hacia = hacia
         if modificación_stock == None:
-            return super().stock(sku) 
+            return super().stock(sku) #este super() utiliza el método stock de la clase superior (InventarioMixin), en vez de utilizar stock de ESTA misma clase
         
         
         elif modificación_stock:
@@ -342,7 +299,7 @@ class Empresa(InventarioMixin):
 
 
 class Bodega(Empresa):
-    """funcionarios es un dict con key ruts y value "activo" o "inactivo", stocks es un dict con key asociado a SKU y value la cantidad"""
+    """Clase para instanciar Bodegas"""
     def __init__(self, nombre, dirección, colaboradores, stocks): 
         super().__init__(nombre, dirección)           
         self.colaboradores = list(colaboradores)
@@ -352,14 +309,14 @@ class Bodega(Empresa):
     def __str__(self):
         return "Bodega" + self.nombre 
 
+#============================FIN CLASE BODEGA==================================
 
 
-## clase sucursal
 class Sucursal(Empresa):
     def __init__(self, nombre, dirección, colaboradores, stocks): 
         super().__init__(nombre, dirección)  
         self.colaboradores = list(colaboradores)
-        self.stocks = stocks #se debe cambiar por llamado a función setter JSON
+        self.stocks = stocks 
         self.tipo_lugar = "sucursal"
         
 
@@ -367,9 +324,9 @@ class Sucursal(Empresa):
         return "Sucursal" + self.nombre
 #============================FIN CLASE SUCURSAL==================================
 
-        ##se agrega la clase compra. funciona sin agregar como herencia Sucursal, Bodega, Vendedor, Cliente, y OrdenCompra,
-        #pero si no se agregan Compra no accede a los __str__ de estas.
-class Compra(Sucursal, Bodega, Vendedor, Cliente, OrdenCompra, InventarioMixin): 
+     
+class Compra(Sucursal, Bodega, Vendedor, Cliente, OrdenCompra, InventarioMixin):
+    """Esta clase congrega los distintos objetos involucrados en al realización de una compra"""
 
     def __init__(self, cliente, ordencompra, sucursal, cantidad):
         
@@ -379,10 +336,8 @@ class Compra(Sucursal, Bodega, Vendedor, Cliente, OrdenCompra, InventarioMixin):
         self.orden_de_compra = ordencompra
         self.tipo_lugar = "sucursal"
         self._id = sucursal
-        
         self.cantidad = cantidad
-        super().__str__
-       
+               
         try:
             if self.cantidad > 10:
                 raise NoSeraMuchoException("No se pueden comprar más de 10 unidades")
@@ -394,10 +349,12 @@ class Compra(Sucursal, Bodega, Vendedor, Cliente, OrdenCompra, InventarioMixin):
 
         def __str__(self):
             return self.orden_de_compra
-    #logica:
-    #hice los minimos cambios posibles para que vendedor pueda ejecutar la venta mediante los recursos que le pase OrdenCompra en vez de acceder a los productos directamente.
-    #a futuro presumo que la logica podría ser que la orden de compra incluya la sucursal de origen para determinar de donde descontar el stock y tal.
+    
     def procesar_compra(self, vendedor):
+        """
+        Autoriza una compra, que indica que está preparada para gestionarse. 
+        Realiza internamente los cambios resultantes de esta transacción y los registra.
+        """
         self.vendedor = vendedor
         self.tipo_movimiento = "compra" #para usar en InventarioMixin
         print(f"Venta inicializada por {self.vendedor.nombre}:")
@@ -414,7 +371,7 @@ class Compra(Sucursal, Bodega, Vendedor, Cliente, OrdenCompra, InventarioMixin):
             print(f"Despacho: ${self.cantidad * 5000}")
             print(f"Valor final a pagar:   {self.cantidad}*${self.producto.valor_total} = ${gasto}")
 
-        #cambiar referencia a la de stock dentro de sucursal.... agregar agumento de sucursal y bodega asociada?
+       
         #desde este punto en adelante los cálculos de gasto y comisiones son en base a "gasto" que refleja el monto total a pagar.
         if (self.sucursal.stock(self.producto.sku)>=self.cantidad and self.cliente.saldo()>=gasto)==True:
             
@@ -452,13 +409,11 @@ class Compra(Sucursal, Bodega, Vendedor, Cliente, OrdenCompra, InventarioMixin):
         
         #=========================REGISTRO DE VENTAS===========================
             #Revisamos si existe el archivo.
-            #caso existe y/o está no está en peso 0:
-            if os.path.isfile(self.vendedor.registroventas) and os.path.getsize(self.vendedor.registroventas) > 0: #con esto se corrobora que existe y que no está vacío
-                #el chequeo de getsize es relevante porque puede sino fallar al intentar llenar un archivo que existe pero está vacío (onda, vaciado manualmente)
+            
+            if os.path.isfile(self.vendedor.registroventas) and os.path.getsize(self.vendedor.registroventas) > 0: 
                 print("archivo existe")
 
-                with open(self.vendedor.registroventas, 'r', encoding='utf-8') as f: #primero lo abro solo para cargar el contenido original en modo de lectura
-                    #es extremadamente importante incluir el enconding en el read también o puedes provocar memes de ZALGO en el json, que empeoran con cada lectura 
+                with open(self.vendedor.registroventas, 'r', encoding='utf-8') as f:  
                     contenido = json.load(f)
                 nuevo_item = {
                                 'Nombre del vendedor': f"{' '.join([self.vendedor.nombre, self.vendedor.apellido])}",
@@ -472,9 +427,7 @@ class Compra(Sucursal, Bodega, Vendedor, Cliente, OrdenCompra, InventarioMixin):
                     json.dump(contenido, f, indent=4, ensure_ascii=False)
             else:
                 print("archivo no existe, creando..")
-                #"w" para modo "wrande"
                 with open(self.vendedor.registroventas, "w", encoding='utf-8') as fichero:
-                    #cabecera = ['Nombre del vendedor', 'Orden de compra', 'Total', 'Cliente', 'Comisión']
                     contenedor = []
                     contenido = {
                                 'Nombre del vendedor': f"{' '.join([self.vendedor.nombre, self.vendedor.apellido])}",
@@ -492,21 +445,6 @@ class Compra(Sucursal, Bodega, Vendedor, Cliente, OrdenCompra, InventarioMixin):
             print("No tiene saldo suficiente para concretar la transacción")
              
 #===================================FIN CLASE COMPRA=====================================
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 #===================================INSTANCIACIONES DE EJEMPLO=====================================
 proveedor1 = Proveedor("111111111", "Proveedor1", "Falabella", "Mexico", "Persona Juridica")
@@ -531,9 +469,6 @@ vendedor3 = Vendedor("12345699-3", "Luis", "Gómez", "Juguetería", 5, 52)
 vendedor4 = Vendedor("12345655-4", "Ana", "Rodríguez", "Electro", 5, 53)
 vendedor5 = Vendedor("12345622-5", "María", "González", "Menaje", 5, 54)
 
-#Se debe crear métodos en la clase Cliente, lo cual puedan agregar y mostrar saldo.
-#Como se encuentra trabajando en el desarrollo del módulo de Python Básico, se solicita integrar
-#correctamente los métodos de las clases en las opciones del menú desarrollado.
 cliente1 = Cliente("14566333-2", "Ignacio", "Fuentealba", "correo@gmail.com", "25-enero", 25000000, 33)
 cliente2 = Cliente("14563533-4", "Juan", "Perez", "pepo@hotmail.com", "15-enero", 0, 25)
 cliente3 = Cliente("14521433-5", "Pedro", "Gomez", "XXXXXXXXXXXXXXX", "20-enero", 100000, 18)
@@ -542,7 +477,6 @@ cliente5 = Cliente("14566133-3", "Luis", "Gonzalez", "XXXXXXXXXXXXXXX", "20-febr
 
 #como parte de la inicialización del programa, se almacenan los clientes (usuarios) en un JSON
 
-#    def __init__(self, id_cliente, nombre, apellido, correo, fecha_Registro, saldo, edad = None):
 
 def escribir_a_json(clientes):
     with open('usuarios.json', 'w', encoding='utf-8') as file:
@@ -561,4 +495,3 @@ def escribir_a_json(clientes):
 
     # Close the file
     file.close()
-#============================ENVIAR CLIENTES A JSON=============================
