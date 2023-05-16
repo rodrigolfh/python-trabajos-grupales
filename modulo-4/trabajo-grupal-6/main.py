@@ -534,8 +534,31 @@ vendedor5 = Vendedor("12345622-5", "María", "González", "Menaje", 5, 54)
 #Se debe crear métodos en la clase Cliente, lo cual puedan agregar y mostrar saldo.
 #Como se encuentra trabajando en el desarrollo del módulo de Python Básico, se solicita integrar
 #correctamente los métodos de las clases en las opciones del menú desarrollado.
-cliente1 = Cliente("14566333-2", "Ignacio", "Fuentealba", "correo@gmail.com", "25-enero", 25000000)
-cliente2 = Cliente("14563533-4", "Juan", "Perez", "pepo@hotmail.com", "15-enero", 0)
-cliente3 = Cliente("14521433-5", "Pedro", "Gomez", "XXXXXXXXXXXXXXX", "20-enero", 100000)
-cliente4 = Cliente("14566643-k", "Maria", "Lopez", "XXXXXXXXXXXXXXX", "20-marzo", 0)
-cliente5 = Cliente("14566133-3", "Luis", "Gonzalez", "XXXXXXXXXXXXXXX", "20-febrero", 0)
+cliente1 = Cliente("14566333-2", "Ignacio", "Fuentealba", "correo@gmail.com", "25-enero", 25000000, 33)
+cliente2 = Cliente("14563533-4", "Juan", "Perez", "pepo@hotmail.com", "15-enero", 0, 25)
+cliente3 = Cliente("14521433-5", "Pedro", "Gomez", "XXXXXXXXXXXXXXX", "20-enero", 100000, 18)
+cliente4 = Cliente("14566643-k", "Maria", "Lopez", "XXXXXXXXXXXXXXX", "20-marzo", 0, 60)
+cliente5 = Cliente("14566133-3", "Luis", "Gonzalez", "XXXXXXXXXXXXXXX", "20-febrero", 0, 42)
+
+#como parte de la inicialización del programa, se almacenan los clientes (usuarios) en un JSON
+
+#    def __init__(self, id_cliente, nombre, apellido, correo, fecha_Registro, saldo, edad = None):
+
+def escribir_a_json(clientes):
+    with open('usuarios.json', 'w', encoding='utf-8') as file:
+        usuarios_json = {'usuarios': []}
+        for user in clientes:
+            usuarios_json['usuarios'].append({
+                'id': user.id_cliente,
+                'nombre': user.nombre,
+                'apellido': user.apellido,
+                'correo': user.correo,
+                'fecha_Registro': user.fecha_registro,
+                'saldo': user.saldo()
+
+            })
+        json.dump(usuarios_json, file, indent=4, ensure_ascii=False) #el ensure_ascii me permite que el json respete las ñ.
+
+    # Close the file
+    file.close()
+#============================ENVIAR CLIENTES A JSON=============================
