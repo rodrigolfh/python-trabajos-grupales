@@ -68,17 +68,41 @@ VALUES
 CREATE TABLE contactos (
   id_contacto INT PRIMARY KEY AUTO_INCREMENT, #almacenará solo numeros enteros ascendentes
   id_usuario INT, #igualmente, solo numeros enteros, una llave foránea
-  fono INT, -- número de teléfono, un entero
+  teléfono INT, -- número de teléfono, un entero
   mail VARCHAR(55),
-  FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario)
+  FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario) 
 );
 
 -- Parte 7: Modifique la columna teléfono de contacto, para crear un vínculo entre la tabla Usuarios y la
 -- tabla Contactos.
 
-ALTER TABLE contactos
-ADD INDEX idx_fono (fono); -- para poder hacer el paso siguiente, Mysql exige un indexado.
 
-ALTER TABLE usuarios
-ADD COLUMN fono INT,
-ADD FOREIGN KEY (fono) REFERENCES contactos(fono) ON UPDATE CASCADE;
+truncate table contactos;
+truncate table usuarios;
+truncate table ingresos;
+SET FOREIGN_KEY_CHECKS = 0;
+SET FOREIGN_KEY_CHECKS = 1;
+
+CREATE INDEX index_fono_usuario ON usuarios (id_usuario, teléfono);
+ALTER TABLE contactos
+ADD FOREIGN KEY (id_usuario, teléfono) REFERENCES usuarios(id_usuario, teléfono) ON UPDATE CASCADE;
+
+select * from usuarios;
+select * from contactos;
+
+alter table contactos modify teléfono varchar(20);
+
+INSERT INTO usuarios (nombre, apellido, contraseña, zona_horaria, género, teléfono)
+VALUES
+  ('Juan', 'Pérez', 'password1', 'UTC-2', '1', '912545678');
+  
+  
+ 
+INSERT INTO contactos (id_usuario, teléfono, mail)
+VALUES (1, '999999999', 'eee@gmail.com');
+
+
+ 
+update contactos
+set  teléfono = '929292929' 
+where id_usuario = 1;
