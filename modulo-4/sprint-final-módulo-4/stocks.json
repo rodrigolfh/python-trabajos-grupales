@@ -10,7 +10,101 @@
         "hacia": null,
         "movimiento": 0,
         "saldo": 0
-
+    },
+    "1684203604.041312": {
+        "tipo_lugar": "sucursal",
+        "nombre_lugar": "Sucursal Mall Plaza",
+        "tipo_movimiento": null,
+        "producto": "001",
+        "documento_asociado": null,
+        "responsable": null,
+        "desde": null,
+        "hacia": null,
+        "movimiento": 5,
+        "saldo": 5
+    },
+    "1684203604.047314": {
+        "tipo_lugar": "sucursal",
+        "nombre_lugar": "Sucursal Mall Plaza",
+        "tipo_movimiento": null,
+        "producto": "001",
+        "documento_asociado": null,
+        "responsable": null,
+        "desde": null,
+        "hacia": null,
+        "movimiento": -5,
+        "saldo": 0
+    },
+    "1684203604.053315": {
+        "tipo_lugar": "sucursal",
+        "nombre_lugar": "Sucursal Mall Plaza",
+        "tipo_movimiento": null,
+        "producto": "001",
+        "documento_asociado": null,
+        "responsable": null,
+        "desde": null,
+        "hacia": null,
+        "movimiento": 49,
+        "saldo": 49
+    },
+    "1684203604.054315": {
+        "tipo_lugar": "sucursal",
+        "nombre_lugar": "Sucursal Mall Plaza",
+        "tipo_movimiento": null,
+        "producto": "001",
+        "documento_asociado": null,
+        "responsable": null,
+        "desde": null,
+        "hacia": null,
+        "movimiento": -47,
+        "saldo": 2
+    },
+    "1684203604.059564": {
+        "tipo_lugar": "sucursal",
+        "nombre_lugar": "Sucursal Mall Plaza",
+        "tipo_movimiento": null,
+        "producto": "004",
+        "documento_asociado": null,
+        "responsable": null,
+        "desde": null,
+        "hacia": null,
+        "movimiento": 46,
+        "saldo": 46
+    },
+    "1684203604.065565": {
+        "tipo_lugar": "Bodega",
+        "nombre_lugar": "Bodega Principal",
+        "tipo_movimiento": "override",
+        "producto": "003",
+        "documento_asociado": null,
+        "responsable": null,
+        "desde": null,
+        "hacia": null,
+        "movimiento": 0,
+        "saldo": 0
+    },
+    "1684203604.070567": {
+        "tipo_lugar": "Bodega",
+        "nombre_lugar": "Bodega Principal",
+        "tipo_movimiento": "override",
+        "producto": "005",
+        "documento_asociado": null,
+        "responsable": null,
+        "desde": null,
+        "hacia": null,
+        "movimiento": 0,
+        "saldo": 199
+    },
+    "1684203604.077568": {
+        "tipo_lugar": "Bodega",
+        "nombre_lugar": "Bodega Principal",
+        "tipo_movimiento": "override",
+        "producto": "003",
+        "documento_asociado": null,
+        "responsable": null,
+        "desde": null,
+        "hacia": null,
+        "movimiento": 0,
+        "saldo": 0
     }
 }
-

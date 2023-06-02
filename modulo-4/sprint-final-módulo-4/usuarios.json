@@ -1,0 +1,44 @@
+{
+    "usuarios": [
+        {
+            "id": "14566333-2",
+            "nombre": "Ignacio",
+            "apellido": "Fuentealba",
+            "correo": "correo@gmail.com",
+            "fecha_Registro": "25-enero",
+            "saldo": 25000000
+        },
+        {
+            "id": "14563533-4",
+            "nombre": "Juan",
+            "apellido": "Perez",
+            "correo": "pepo@hotmail.com",
+            "fecha_Registro": "15-enero",
+            "saldo": 0
+        },
+        {
+            "id": "14521433-5",
+            "nombre": "Pedro",
+            "apellido": "Gomez",
+            "correo": "XXXXXXXXXXXXXXX",
+            "fecha_Registro": "20-enero",
+            "saldo": 100000
+        },
+        {
+            "id": "14566643-k",
+            "nombre": "Maria",
+            "apellido": "Lopez",
+            "correo": "XXXXXXXXXXXXXXX",
+            "fecha_Registro": "20-marzo",
+            "saldo": 0
+        },
+        {
+            "id": "14566133-3",
+            "nombre": "Luis",
+            "apellido": "Gonzalez",
+            "correo": "XXXXXXXXXXXXXXX",
+            "fecha_Registro": "20-febrero",
+            "saldo": 0
+        }
+    ]
+}
