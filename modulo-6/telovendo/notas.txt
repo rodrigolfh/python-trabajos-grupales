@@ -1,0 +1,27 @@
+Comandos relevantes:
+Crear proyecto $ django-admin startproject sitiodeprueba
+Levantar server $ python manage.py runserver
+Crear aplicacion django-admin startapp telovendoAPP
+Crear aplicacion py manage.py startapp telovendoAPP
+---------
+Al igual que en cualquier proyecto Python, este archivo se genera utilizando la
+utilidad pip, estando en el entorno virtual correspondiente al proyecto, de la
+siguiente forma:
+$ pip freeze > requirements.txt
+En caso de desear replicar las mismas dependencias en otra máquina, para trabajar
+paralelamente en el mismo proyecto o para desplegarlo en producción, utilizamos:
+$ pip install -r requirements.txt
+
+
+Crear template html:
+
+1. en views.py (app), crear (o modificar) la función:
+
+def index(request):
+    return(render(request, "telovendo_app/index.html")) #se agrega render para indicar que debe renderizar el template indicado
+
+esa ubicación dirige a un template (index.html) ubicado en la carpeta de la app/templates/app, que hay que crear.
+
+
+
+
