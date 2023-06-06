@@ -8,15 +8,15 @@
     pip freeze > requirements.txt
 
 4. Crear proyecto:
-    django-admin startproject sitio
+    django-admin startproject nombre_proyecto
 
-5. Crear app (dentro de la carpeta del proyecto):
-    django-admin startapp sitio_app
+5. Crear app (IMPORTANTE: dentro de la carpeta del proyecto):
+    django-admin startapp nombre_app
 
-6. agregar APP a settings.py:
-    agregar 'landing' a la lista 'INSTALLED_APPS'
+6. Agregar APP a settings.py:
+    agregar 'nombre_app' a la lista 'INSTALLED_APPS'
 
-7. modificar views.py en carpeta de APP:
+7. Modificar views.py en carpeta de APP:
   
    -Request representa el request que hace el usuario al servidor
 
@@ -24,6 +24,8 @@
         return(render(request, "landing/index.html")) #se agrega render para indicar que debe renderizar el template indicado.
 
     #esa ubicación dirige a un template (index.html) ubicado en la carpeta de la app/templates/app, que hay que crear.
+    - Se puede agregar un tercer argumento a render, que es un diccionario donde cada 'key' es una variable a la que 
+    se puede acceder dentro del template, y cada value es la definición de dicha variable.
 
 8. Crear urls.py de APP:
 
@@ -36,7 +38,7 @@
         # views.index es la función de views.py, que define qué se mostrará
         # name = "index" se le da nombre, para poder referenciarlo desde otras apps.
 
-9. Modificar urls.py de PROYECTO:
+9. Modificar urls.py de PROYECTO, para que acceda al urls.py de la app:
 
     -agregar 'include' al import de django.urls:
         from django.urls import include, path
@@ -54,6 +56,9 @@ Para agregar template con bootstrap:
 
 https://www.w3schools.com/django/django_add_bootstrap5.php
 
+Bootstrap:  https://www.javatpoint.com/django-and-bootstrap
 
+1. Crear carpeta static dentro de carpeta de la APP. 
+2. Extraer ambas carpetas de Bootstrap (js y css) dentro de 'static'.
 
     
