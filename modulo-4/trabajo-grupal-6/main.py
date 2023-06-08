@@ -1,5 +1,5 @@
+from excepciones import NoSeraMuchoException
 from datetime import datetime
-
 from excepciones import NoSeraMuchoException
 import json
 import os
@@ -8,22 +8,24 @@ productos = []
 clientes = []
 
 class InventarioMixin(): 
+
     """
     Esta clase es un "Mixin", una clase sin constructor, que toma los atributos desde donde se llama
     """
 
     def línea(self, tipo_movimiento = None, producto= None, documento_asociado = None, responsable= None, desde = None, hacia = None, movimiento = 0, saldo = 0):
         """La función .línea(*) crea una entrada de diccionario con el saldo actualizado y más información relevante,  y la agrega al json stocks.json.
-"""
+        """
+
         timestamp = datetime.now().timestamp() #timestamp en formato UNIX, ej: 1669123919.331225, más fácil para ordenar y da un valor único que sirve de ID
         tipo_lugar = self.tipo_lugar #Sucursal o Bodega, lo saca de la clase
         nombre_lugar = self._id #nombre instancia
         self.tipo_movimiento = tipo_movimiento
-        tipo_movimiento = tipo_movimiento #por ejemplo reposición, venta, override (definir_stock de Empresa)
+        tipo_movimiento = tipo_movimiento #por ejemplo reposición, venta, override (override lo hace define_stock de Empresa)
         documento_asociado = documento_asociado #ej: orden de compra
         desde = desde # ej: desde sucursal
         hacia = hacia # hacia rut cliente
-        if not movimiento:
+        if not movimiento: #si no se define el atributo movimiento, se define variable en 0.
             movimiento = 0
         
         ruta_archivo = "stocks.json"
@@ -35,11 +37,14 @@ class InventarioMixin():
 
             # Des-serializar el contenido del archivo
             datos_json = json.loads(json_data)
+            
+            #valores por defecto de timestamp y saldo, y se van cambiando según loop for.
             último_timestamp = 0
             último_saldo = 0
 
             #buscar último saldo de nombre_lugar 
             for item in datos_json:
+
                 if datos_json[item]["nombre_lugar"] == nombre_lugar and datos_json[item]["producto"] == producto and float(item) > float(último_timestamp):
                     último_timestamp = item
                     último_saldo = datos_json[último_timestamp]["saldo"] 
@@ -48,6 +53,7 @@ class InventarioMixin():
                 
             elif tipo_movimiento == "override": #si el movimiento SI es un override de define_stock, el saldo nuevo será el definido por el override
                 nuevo_saldo = saldo
+        #estructura de nueva línea a agregar luego al archivo .json
         nueva_línea =  {"tipo_lugar": tipo_lugar, "nombre_lugar": nombre_lugar, "tipo_movimiento": tipo_movimiento, "producto": producto, "documento_asociado": documento_asociado, "responsable": responsable, "desde": desde, "hacia": hacia, "movimiento": movimiento, "saldo": nuevo_saldo}
 
         if os.path.isfile(ruta_archivo) and os.path.getsize(ruta_archivo) > 0: #si el archivo existe y no está vacío:
@@ -59,11 +65,11 @@ class InventarioMixin():
             datos_json = json.loads(json_data)
             datos_json[timestamp] = nueva_línea
         else:
-            datos_json = {} 
+            datos_json = {} #diccionario vacío para poder en la sgte línea agregar un par key:value
             datos_json[timestamp] = nueva_línea
         
         actualizado_json = json.dumps(datos_json, indent=4)
-        # Esobreescribe el json con actualizado_json
+        # Ssobreescribe el json con actualizado_json
         with open('stocks.json', 'w') as file:
             file.write(actualizado_json)
 
@@ -87,7 +93,6 @@ class InventarioMixin():
 
 
 
-    
 
 
 class Cliente:
@@ -303,7 +308,7 @@ class Bodega(Empresa):
     def __init__(self, nombre, dirección, colaboradores, stocks): 
         super().__init__(nombre, dirección)           
         self.colaboradores = list(colaboradores)
-        self.stocks = stocks #se debe cambiar por llamado a función setter JSON
+        self.stocks = stocks 
         self.tipo_lugar = "Bodega"
         
     def __str__(self):
