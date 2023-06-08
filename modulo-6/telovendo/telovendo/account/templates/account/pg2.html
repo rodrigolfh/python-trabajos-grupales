@@ -1,0 +1,26 @@
+{% extends "account/base.html" %}
+
+{% block body %}
+<img src="https://media.istockphoto.com/id/521247381/vector/avatars-characters.jpg?s=612x612&w=0&k=20&c=y1Em7kZDV6JvIAs576l_K-DQnDK_1CEDVPKCLaDZVp8=" alt="" width="200px">
+  
+<h1>Lista de usuarios</h1>
+<ol>
+  {% for usuario in users|slice:":5" %}
+        <li>username: {{ usuario }}
+        <ul>
+            <li>ID: {{usuario.id}}</li>
+            <li>Fecha Primer Ingreso: {{usuario.date_joined}}</li>
+            <li>Nombre : {{usuario.first_name}}</li>
+            <li>Apellido: {{usuario.last_name}}</li>
+            <li>Mail: {{usuario.email}}</li>
+            
+            <br>
+        </ul>
+    </li>
+    {% endfor %}
+
+    <img src="https://cdn.pixabay.com/photo/2016/04/15/18/05/computer-1331579_640.png" alt="" width="200">
+</ol>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+
+{% endblock %}
