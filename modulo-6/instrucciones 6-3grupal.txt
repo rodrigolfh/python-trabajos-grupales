@@ -1,0 +1,41 @@
+1. Cuando queramos hacer uso de las cuentas de usuario base de Django con nuestro sqlite existente nos disponemos a realizar la primera migración:
+    py manage.py makemigrations
+    py manage.py migrate
+
+
+2. Modificamos views.py de la siguiente manera:
+
+    - Importar desde django.contrib.auth.models el tipo de modelo que queremos mostrar. En este caso importaremos User, porque
+    deseamos importar usuarios:
+
+        from django.contrib.auth.models import User
+    
+    - Crear o modificar un view, generando una variable que accederá a la información deseada en la base de datos.
+    En este caso la asociamos a 'users':
+
+        users = User.objects.all()
+    
+    - Ahora le entregamos a render un tercer atributo (un par key:value), que le permitirá al view acceder a users:
+
+        return render(request, 'account/pg2.html', { 'users':users})
+
+3. Ahora, en el archivo de template destinado a mostrar los usuarios, agregaremos la lógica necesaria para iterar y mostrar los usuarios
+y los atributos seleccionados, mostrados en formato {{modelo.atributo}}
+    <ol>
+    {% for usuario in users %} # loop for que itera por cada uno de los usuarios
+        <li>username: {{ usuario.username }} 
+        <ul> #dentro de cada iteración, se genera una lista no ordenada con cinco atributos en cada elemento
+            <li>ID: {{usuario.id}}</li>
+            <li>Fecha Primer Ingreso: {{usuario.date_joined}}</li>
+            <li>Nombre : {{usuario.first_name}}</li>
+            <li>Apellido: {{usuario.last_name}}</li>
+            <li>Mail: {{usuario.email}}</li>
+            
+            <br>
+        </ul>
+    </li>
+    {% endfor %}
+    </ol>
+
+
+

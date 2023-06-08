@@ -1,0 +1,56 @@
+1. Crear entorno virtual:
+    python3 -m venv .venv #. para que git lo ignore
+
+2. Importar Django:
+    pip install django
+
+3. Guardar versiones y módulos importados:
+    pip freeze > requirements.txt
+
+4. Crear proyecto:
+    django-admin startproject nombre_proyecto
+
+5. Crear app (IMPORTANTE: dentro de la carpeta del proyecto):
+    django-admin startapp nombre_app
+
+6. Agregar APP a settings.py:
+    agregar 'nombre_app' a la lista 'INSTALLED_APPS'
+
+7. Modificar views.py en carpeta de APP:
+  
+   -Request representa el request que hace el usuario al servidor
+
+    def index(request):
+        return(render(request, "landing/index.html")) #se agrega render para indicar que debe renderizar el template indicado.
+
+    #esa ubicación dirige a un template (index.html) ubicado en la carpeta de la app/templates/app, que hay que crear.
+    - Se puede agregar un tercer argumento a render, que es un diccionario donde cada 'key' es una variable a la que 
+    se puede acceder dentro del template, y cada value es la definición de dicha variable.
+
+8. Crear urls.py de APP:
+
+    from django.urls import path #para que pueda acceder al urls.py del PROYECTO
+    from . import views #para que se pueda acceder a views.py
+    urlpatterns = [
+        path("", views.index, name = "index")]
+
+        # "" está vacío porque no se le dará argumentos al final de la ruta
+        # views.index es la función de views.py, que define qué se mostrará
+        # name = "index" se le da nombre, para poder referenciarlo desde otras apps.
+
+9. Modificar urls.py de PROYECTO, para que acceda al urls.py de la app:
+
+    -agregar 'include' al import de django.urls:
+        from django.urls import include, path
+
+    -agregar un item a url_patterns:
+        path('landing', include("landing.urls")) # para poder usar urls.py de la APP
+    
+10. Iniciar servidor en la terminal:
+
+    python3 manage.py runserver
+
+
+
+
+    
