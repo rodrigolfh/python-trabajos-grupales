@@ -1,3 +1,6 @@
 modulo-4/trabajo-grupal-4/__pycache__/main.cpython-311.pyc
 modulo-4/trabajo-grupal-6/__pycache__/excepciones.cpython-311.pyc
 modulo-4/trabajo-grupal-6/__pycache__/main.cpython-311.pyc
+.venv
+*.venv*
+__pycache__
