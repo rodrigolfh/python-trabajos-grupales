@@ -1,0 +1,13 @@
+{% extends "account/base.html" %}
+{% block body %}
+<h1>TESTING </h1>
+<form action="" method="POST">
+    {% csrf_token %}
+    <table>
+        {{ form.as_p }}
+    </table>
+    <button type="submit">Registrarse</button>
+
+</form>
+
+{% endblock  %}

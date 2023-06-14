@@ -2,6 +2,7 @@ from django.contrib import admin
 from account.models import Account #linea agregada manual
 from django.contrib.auth.models import User
 from django.contrib.auth.admin import UserAdmin
+from .models import Proveedor
 # Register your models here.
 
 class AccountInLine(admin.StackedInline):
@@ -16,3 +17,10 @@ class CustomizedUserAdmin(UserAdmin):
 admin.site.unregister(User)
 admin.site.register(User, CustomizedUserAdmin)
 #admin.site.register(Account)
+admin.site.register(Proveedor)
+
+
+
+
+# Register your models here.
+
