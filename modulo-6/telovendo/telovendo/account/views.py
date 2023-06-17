@@ -3,17 +3,24 @@ from django.contrib.auth.models import User
 from .models import Proveedor
 from .forms import ProveedorForm
 from django.contrib import messages
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required, permission_required
+from django.http import HttpResponse, HttpResponseRedirect
+from django.urls import reverse
 # Create your views here.
 def index(request):
     
     users = User.objects.all()
     return render(request, 'account/index.html')
 
+@login_required(login_url="/account/login")
 def pg2(request):
     users = User.objects.all()
     return render(request, 'account/pg2.html', { 'users':users})
 
 #-------------------------------------------------------------------
+
+@login_required(login_url="/account/login")
 def crear_proveedor(request):
     form = ProveedorForm()
 
@@ -42,3 +49,38 @@ def crear_proveedor(request):
     
     return render(request, 'account/inscripcion.html', context=context)
 
+
+
+
+def login_view(request):
+    if 'next' in request.GET:
+        #si en la url está la palabra "next", generada al redirigir desde @login_required, enviar mensaje.
+        messages.add_message(request, messages.INFO, 'Debe ingresar para acceder a las funcionalidades.')
+
+
+    if request.method == "POST":
+        username = request.POST["usuario"]
+        password = request.POST["password"]
+
+        user = authenticate(request, username=username, password=password)
+
+        if user:
+            
+            login(request, user)
+          
+            return HttpResponseRedirect(reverse("bienvenida"))
+        else:
+            context= ["Credenciales Inválidas"]#si no lo hago como lista, itera por cada caracter del string.
+            return render(request, "account/login.html", {"messages": context})
+
+    return render(request, "account/login.html") #view del login
+
+
+def bienvenida_view(request):
+    
+    return render(request, 'account/bienvenida.html')
+
+def logout_view(request):
+    
+    logout(request)
+    return render(request, "account/logout.html")
