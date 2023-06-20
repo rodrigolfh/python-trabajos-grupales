@@ -1,12 +1,10 @@
 {% extends 'account/base.html' %}
-{% block body %}
 
-<h3>Administrativo | Área de registro de usuarios</h3>
-<form action="" method="post">
+{% block body %}
+  <h3>Administrativo | Área de registro de usuarios</h3>
+  <form class="mt-4" action="" method="post">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit">Registrarse</button>
-
-</form>
-
-{% endblock  %}
+    <button type="submit" class="btn btn-primary">Registrarse</button>
+  </form>
+{% endblock %}
