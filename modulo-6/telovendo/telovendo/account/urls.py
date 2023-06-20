@@ -6,6 +6,7 @@ urlpatterns = [
     path("inscripcion", views.crear_proveedor, name = "inscripcion"),
     path("login", views.login_view, name="login"),
     path("bienvenida", views.bienvenida_view, name="bienvenida"),
+    path('forms', views.forms, name='forms'), 
     path("logout", views.logout_view, name="logout"),
     #path("usuarios", views.usuarios, name = "usuarios")
     # "" es lo que sigue de la url principal, en este caso es solo /, 
