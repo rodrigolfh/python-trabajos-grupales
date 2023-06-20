@@ -1,0 +1,119 @@
+
+Diferencia entre GET y POST:
+
+La diferencia entre ellos es la forma en que se envían los datos a la página; El método GET envía los datos usando la URL, 
+lo que significa que los datos son visibles en la barra de direcciones del navegador, restandole privacidad. En contraste el método POST envía los datos de frma 
+que no podemos verlos (en un segundo plano u "ocultos" al usuario). En resumen, el método GET es útil para recuperar datos (y almacenarlos temporalmente), 
+mientras que el método POST es útil para enviar información privada.
+
+<FORMULARIO>
+
+1. models.py
+
+    a. Crear modelos. 
+        -Cada clase debe heredar de (models.Model).
+        -Se define cada campo como una variable, asignada a un 'model data type' que indica el tipo de dato que se almacenará en la db.
+        
+        ej:
+        class Persona(models.Model):
+            rut = models.CharField(max_lenght=11)
+            nombre = models.CharField(max_length=40)
+            apellidos = models.CharField(max_length=70)
+            ... etc
+
+        - se puede definir un __str__ para que en el campo del objeto se vea su nombre:
+            def __str__(self):
+                return f"{self.nombre} {self.apellidos}"
+    b. Hacer las migraciones, para que los modelos se agreguen a la base de datos:
+        
+        $ python3 manage.py makemigrations nombre_app #importante indicar el nombre de la app si es que hay más de una app.
+        $ python3 maage.py migrate
+
+
+2. views.py
+    a. Importar los modelos recién creados, para poder acceder a ellos:
+        ejemplo:
+        from .models import Profesor, Alumno, Funcionario
+        etc.
+    
+    b. Crear una clase para el formulario. Esta clase se puede agregar en un forms.py y luego importarlo a views. En este caso lo hice
+        directamente en views.py.
+
+        class AgregaFuncionarioForm(forms.Form):
+            rut = forms.CharField(label="RUT")
+            nombre = forms.CharField(label = "Nombre")
+            apellidos = forms.CharField(label="Apellidos")
+            ... etc
+
+    b. Crear un view que tenga acceso al formulario recién creado.
+        def agregar_usuario(request):
+            return render(request, 
+                  "user_manager/agregar.html", 
+                  {'formulario': AgregaFuncionarioForm(request.POST), #request.POST solicita envío})
+                   
+    c. Importar el módulo de formularios de django:
+
+        from django import forms
+
+    e. Agregar la variable del formulario recién creado al view, para que se pueda tener acceso desde el html.
+
+        def agregar_usuario(request):
+            return render(request, "user_manager/agregar.html", {'formulario': AgregaFuncionarioForm, 'funcionarios': Funcionario.objects.all(), 'alumnos': Alumno.objects.all()})
+
+3. Hacer un template donde se creará la funcionalidad, en este caso se llamará agregar.html. Ademá de el 'extend' y el 'block', llevará
+   lo siguiente:
+
+        <h1>Agregar funcionario<h1>
+    <form action="", method="POST">
+        {% csrf_token %}
+        <table>
+            {{ formulario}}
+        </table>
+        <button type="submit">Enviar</button>
+    </form>
+    
+    *   action="" determina con qué URL se trabajará(la ctual en este caso), y 'POST' es el método que se ejecutará al hacer submit,
+        que en este caso empaquetará el formulario, lo codificará y lo enviará al servidor.
+    **  'csrf_token' genera automáticamente un token único para identificar la sesión.
+    *** {{formulario}} llama al formulario creado dentro de views.py, por el nombre que se le asignó a la variable en los atributos del
+        respectivo render.
+
+4. Modificamos el view del formulario en views.py para agregar lógica de verificación de los datos del formulario antes de ser enviado.
+
+
+    def agregar_usuario(request):
+    formulario = AgregaFuncionarioForm() #se guarda los datos llenados por el usuario en esta variable
+
+    if request.method == "POST": #es decir, si esto es un request de tipo "POST", realizar lo siguiente:
+
+        formulario = AgregaFuncionarioForm(request.POST) #crea una instancia del formulario, con los datos entregados por el usuario
+        
+        if formulario.is_valid(): # si el formulario es válido,
+            funcionario = Funcionario() #para no escribirlo con mayúscula y paréntesis a cada rato
+
+            #si el formularo está validado, cleaned_data convierte la información a un diccionario, donde se asigna
+            y se 'normaliza' el value a un tipo de datos consistente.
+
+            funcionario.rut = formulario.cleaned_data['rut'] 
+            funcionario.nombre = formulario.cleaned_data['nombre']
+            funcionario.apellidos = formulario.cleaned_data['apellidos']
+            funcionario.género = formulario.cleaned_data['género']
+            funcionario.fono = formulario.cleaned_data['fono']
+
+            funcionario.dirección = formulario.cleaned_data['dirección'] 
+            funcionario.mail = formulario.cleaned_data['mail']
+            funcionario.contraseña = formulario.cleaned_data['contraseña']
+            funcionario.cargo = formulario.cleaned_data['cargo']
+            funcionario.especialidad = formulario.cleaned_data['especialidad']
+            
+            funcionario.vigencia = formulario.cleaned_data['vigencia']
+
+            funcionario.save() #IMPORTANTE para que se almacene todo en la db
+        else:
+            print("Debe ingresar correctamente todos los campos")
+
+        return redirect('agregar') #una vez enviado, redirige donde se le indique.
+
+    context = {'formulario': formulario}
+
+    return render(request,"user_manager/agregar.html", context)
