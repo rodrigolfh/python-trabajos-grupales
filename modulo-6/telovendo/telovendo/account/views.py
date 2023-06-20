@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from .models import Proveedor
-from .forms import ProveedorForm
+from .forms import ProveedorForm, UserRegistrationForm, UserCreationForm
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required, permission_required
@@ -49,13 +49,10 @@ def crear_proveedor(request):
     
     return render(request, 'account/inscripcion.html', context=context)
 
-
-
-
 def login_view(request):
     if 'next' in request.GET:
         #si en la url está la palabra "next", generada al redirigir desde @login_required, enviar mensaje.
-        messages.add_message(request, messages.INFO, 'Debe ingresar para acceder a las funcionalidades.')
+        messages.add_message(request, messages.INFO, 'Acceso restringido, debe autenticarse para acceder al recurso solicitado')
 
 
     if request.method == "POST":
@@ -75,12 +72,30 @@ def login_view(request):
 
     return render(request, "account/login.html") #view del login
 
-
+@login_required(login_url="/account/login")
 def bienvenida_view(request):
     
     return render(request, 'account/bienvenida.html')
 
+@login_required(login_url="/account/login")
 def logout_view(request):
     
     logout(request)
     return render(request, "account/logout.html")
+
+@permission_required('Administradores', login_url='index', raise_exception=True)
+def forms(request):
+    if request.method == "POST":
+        form = UserRegistrationForm(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            group = form.cleaned_data['group']
+            user = form.save()
+            user.groups.add(group)
+            messages.success(request, f'Usuario {username} creado exitosamente!!')
+            return redirect('index') #requiere import de django shortcuts (redirect)
+    else:
+        form = UserRegistrationForm()
+
+    context = {'form': form}
+    return render(request, 'account/formulario.html', context=context)
