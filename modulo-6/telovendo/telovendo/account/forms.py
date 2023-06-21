@@ -22,7 +22,7 @@ class UserRegistrationForm(UserCreationForm):
     password1 = forms.CharField(label="Contraseña", widget=forms.PasswordInput)
     password2 = forms.CharField(label="Confirmacion contraseña", widget=forms.PasswordInput)
     group = forms.ModelChoiceField(queryset=Group.objects.all())
-    date = forms.DateField()
+    
     class Meta:
         model = User
         fields = ['username', 'email', 'password1', 'password2']
