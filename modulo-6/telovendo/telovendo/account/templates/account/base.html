@@ -35,7 +35,8 @@
             <a class="nav-link" href="{% url 'registro_cliente' %}">Registro Clientes<span
                     class="sr-only"></span></a>
         </li> 
-          {% if user.is_authenticated %}
+        
+        {% if user.is_superuser %}
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'pg2' %}">Nuestros usuarios<span
                         class="sr-only"></span></a>
@@ -46,6 +47,7 @@
             <li class="nav-item">
               <a class="nav-link" href="{% url 'forms' %}">Registro de usuarios</a>
             </li>
+            <a class="nav-item nav-link bg-light.bg-gradient" href="">Usuario: {{user}}</a>
             <li class="nav-item">
               <a class="nav-link" href="{% url 'logout' %}">Logout</a>
             </li>
@@ -54,10 +56,14 @@
             <li class="nav-item">
               <a class="nav-link" href="{% url 'login' %}">Acceso usuarios</a>
             </li>
+            
+
+            
             {% endif %}
-            <li class="nav-item">
+            <li class="nav-item fixed-right">
               <a class="nav-link" href="{% url 'admin:index' %}">Administración</a>
             </li>
+
         </ul>
     </div>
 </nav>

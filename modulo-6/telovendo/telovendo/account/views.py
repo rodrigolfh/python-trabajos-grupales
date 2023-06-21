@@ -84,7 +84,7 @@ def logout_view(request):
     return render(request, "account/logout.html")
 
 
-@permission_required('Administradores', login_url='index', raise_exception=False) 
+@permission_required('Administradores', login_url='index', raise_exception=True) 
 def forms(request):
     if request.method == "POST":
         form = UserRegistrationForm(request.POST)
