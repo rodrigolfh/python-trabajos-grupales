@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from .models import Proveedor
-from .forms import ProveedorForm, UserRegistrationForm, UserCreationForm
+from .forms import ProveedorForm, UserRegistrationForm, ClientRegistrationForm
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required, permission_required
@@ -84,7 +84,7 @@ def logout_view(request):
     return render(request, "account/logout.html")
 
 
-@permission_required('Administradores', login_url='index', raise_exception=False)
+@permission_required('Administradores', login_url='index', raise_exception=False) 
 def forms(request):
     if request.method == "POST":
         form = UserRegistrationForm(request.POST)
@@ -100,3 +100,19 @@ def forms(request):
 
     context = {'form': form}
     return render(request, 'account/formulario.html', context=context)
+
+def cliente_form_view(request):
+    if request.method == "POST":
+        form = ClientRegistrationForm(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            group = form.cleaned_data['group']
+            user = form.save()
+            user.groups.add(group)
+            messages.success(request, f'Cliente {username} creado exitosamente!!')
+            return redirect('index') #requiere import de django shortcuts (redirect)
+    else:
+        form = ClientRegistrationForm()
+
+    context = {'form': form}
+    return render(request, 'account/formulario_cliente.html', context=context)

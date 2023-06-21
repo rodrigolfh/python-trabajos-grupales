@@ -8,6 +8,7 @@ urlpatterns = [
     path("bienvenida", views.bienvenida_view, name="bienvenida"),
     path('forms', views.forms, name='forms'), 
     path("logout", views.logout_view, name="logout"),
+    path('registro_cliente', views.cliente_form_view, name='registro_cliente'), 
     #path("usuarios", views.usuarios, name = "usuarios")
     # "" es lo que sigue de la url principal, en este caso es solo /, 
     # el segundo parámetro es lo que se debe renderizar al ingresar allí.

@@ -31,6 +31,10 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav">
+            <li class="nav-item">
+            <a class="nav-link" href="{% url 'registro_cliente' %}">Registro Clientes<span
+                    class="sr-only"></span></a>
+        </li> 
           {% if user.is_authenticated %}
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'pg2' %}">Nuestros usuarios<span
@@ -73,8 +77,8 @@
   {% endblock %}
   </div>
 </div>
-    <div class="container">
-        <footer class="container mt-auto d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top  fixed-bottom">
+    <div class="container bg-light">
+        <footer class="bg-light container mt-auto d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top  fixed-bottom">
           <p class="col-md-4 mb-0 text-muted">&copy; 2023 | Adalid</p>
           <a href="/" class="col-md-4 d-flex align-items-center justify-content-center mb-3 mb-md-0 me-md-auto link-dark text-decoration-none">
             <svg class="bi me-2" width="40" height="32"><use xlink:href="#bootstrap"/></svg>

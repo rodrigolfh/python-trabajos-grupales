@@ -27,3 +27,16 @@ class UserRegistrationForm(UserCreationForm):
         model = User
         fields = ['username', 'email', 'password1', 'password2']
         help_texts = {k:"" for k in fields}
+
+class ClientRegistrationForm(UserCreationForm):
+    email = forms.EmailField()
+    password1 = forms.CharField(label="Contraseña", widget=forms.PasswordInput)
+    password2 = forms.CharField(label="Confirmacion contraseña", widget=forms.PasswordInput)
+    group = forms.ModelChoiceField(queryset=Group.objects.filter(name__in=["Clientes", "Invitado", "Proveedores"]))
+    
+    
+    
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'password1', 'password2']
+        help_texts = {k:"" for k in fields}
