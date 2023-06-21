@@ -18,7 +18,14 @@ Pregunta Tarea Grupal 6:
 Para lograrlo, empleamos los formularios creados para estos fines.
 Para crear un formulario de creación de usuario estándar (es decir, el base de django), necesitamos 4 cosas:
 - Un formulario HTML (forms.py) almacenado en la app del proyecto, este estará basado en el recurso .UserCreationForm de django y tendrá los campos que nosotros determinemos, los cuales irán a parar a la vista para ser procesados.
-- Modificar nuestro archivo views.py para que contenga el código necesario para procesar el request entrante mediante ese formulario enviado
+
+- Modificar nuestro archivo views.py para que contenga el código necesario para procesar el request entrante mediante ese formulario enviado, para ser importado a la base de datos si es un formulario con datos válidos. Esto puede verlo reflejado en views.py en el método "forms".
+
+- Hacer accesible este formulario al usuario mediante algun recurso visual, como un botón en el index. 
+    
+    Ej: <a class="nav-link" href="{% url 'forms' %}">Acceso usuarios</a>, link el cual deberá coincidir con el nombre que le daremos en el archivo de urls.
+
+- En el archivo URLS, definir una ruta que haga accesible este archivo html que contendrá nuestro formulario.
 
 ----------------------------------------------------------------
 
